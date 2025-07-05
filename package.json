@@ -1,10 +1,10 @@
 {
-  "name": "restaurant",
+  "name": "battleship",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "jest",
-    "watch": "jest --watchAll",
+    "watch": "jest --watchAll ./src",
     "start": "webpack serve --open --config webpack.dev.js",
     "build": "webpack --config webpack.prod.js",
     "ghpages-create": "git checkout -B gh-pages && git merge main --no-edit",
