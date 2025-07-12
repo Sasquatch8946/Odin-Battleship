@@ -39,6 +39,7 @@
     "webpack-merge": "^6.0.1"
   },
   "dependencies": {
+    "eslint-plugin-jest": "^29.0.1",
     "pubsub-js": "^1.9.5",
     "save-dev": "^0.0.1-security"
   },
