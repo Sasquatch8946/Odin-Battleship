@@ -17,4 +17,15 @@ describe("Gameboard module", () => {
     test("The receiveAttack method returns false if miss.", () => {
         expect(gb.receiveAttack([9, 9])).toBe(false);
     });
+
+    test("Should have an allShipsSunk method that returns false is all ships are not sunk", () => {
+        expect(gb.allShipsSunk()).toBe(false);
+    });
+
+    test("The allShipsSunk method should return true if all ships on the board are sunk", () => {
+        for (let i = 0; i < gb.ships[0].length; i++) {
+            gb.ships[0].hit();
+        }
+        expect(gb.allShipsSunk()).toBe(true);
+    });
 });
