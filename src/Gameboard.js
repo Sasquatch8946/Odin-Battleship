@@ -16,7 +16,7 @@ class Gameboard {
             ship = new Ship(y2 - y1);
             for (let i = y1; i < y2 + 1; i++) {
                 this.board[x1][i] = 1;
-                ship.coordinates.push(y2 - y1);
+                ship.coordinates.push([x1, i]);
             }
         }
 
