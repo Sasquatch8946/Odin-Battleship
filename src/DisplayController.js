@@ -21,6 +21,7 @@ const DisplayController = (function () {
         const parent = document.querySelector("div.container");
         const gb = document.createElement("div");
         gb.classList.add("gameboard");
+        gb.classList.add(`${player.name.replace(' ', '')}`);
         const gbTitle = document.createElement("div");
         gbTitle.classList.add("gameboard-title");
         gbTitle.innerText = player.name;
@@ -34,8 +35,9 @@ const DisplayController = (function () {
             const row = document.createElement("div");
             row.classList.add("row");
             gb.appendChild(row);
-            for (let j = 0; j < gameboard.board[i].length; j++) {
+            for (let j = 0; j < gameboard.board[i].length + 1; j++) {
                 const column = document.createElement("div");
+
                 if (j === 0) {
                     column.classList.add("row-label");
                     if (i >= 0) {
@@ -49,9 +51,23 @@ const DisplayController = (function () {
         }
     }
 
+    const populateShips = function (player) {
+        const boardName = player.name.replace(' ', '');
+        const rows = document.querySelectorAll(`.${boardName} div.row:has(div.column)`);
+        player.gameboard.ships.forEach((ship) => {
+            console.log(ship.coordinates);
+            ship.coordinates.forEach((coord) => {
+                const [x, y] = coord;
+                const cols = rows[y].querySelectorAll("div.column");
+                cols[x].classList.add("ship");
+            });
+        });
+    }
+
 
     return {
         populateGameBoard,
+        populateShips,
     }
 })();
 

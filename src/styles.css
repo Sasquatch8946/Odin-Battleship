@@ -34,6 +34,7 @@ div.row>div:nth-child(-n + 10) {
 .gameboard-wrapper {
     display: flex;
     flex-direction: column;
+    gap: 5px;
 }
 
 .gameboard-title {
@@ -42,4 +43,8 @@ div.row>div:nth-child(-n + 10) {
     align-items: center;
     font-weight: bold;
     font-size: 1rem;
+}
+
+.ship {
+    background-color: lightblue;
 }
