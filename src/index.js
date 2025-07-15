@@ -6,8 +6,8 @@ import DisplayController from './DisplayController';
 
 
 function main () {
-    const player1 = new Player();
-    const player2 = new Player();
+    const player1 = new Player("Player 1");
+    const player2 = new Player("Player 2");
     player1.gameboard.placeShip([0, 0], [1, 0]);
     player1.gameboard.placeShip([0, 2], [0, 5]);
     player1.gameboard.placeShip([3, 0], [3, 3]);
@@ -20,7 +20,8 @@ function main () {
     player2.gameboard.placeShip([1, 8], [6, 8]);
     player2.gameboard.placeShip([7, 5], [7, 7]);
 
-    DisplayController.populateGameBoard(player1.gameboard);
+    DisplayController.populateGameBoard(player1);
+    DisplayController.populateGameBoard(player2);
 }
 
 main();
