@@ -2,6 +2,7 @@ import './styles.css';
 import Gameboard from './Gameboard';
 import Player from './Player';
 import Ship from './Ship';
+import DisplayController from './DisplayController';
 
 
 function main () {
@@ -18,4 +19,8 @@ function main () {
     player2.gameboard.placeShip([9, 2], [9, 3]);
     player2.gameboard.placeShip([1, 8], [6, 8]);
     player2.gameboard.placeShip([7, 5], [7, 7]);
+
+    DisplayController.populateGameBoard(player1.gameboard);
 }
+
+main();
