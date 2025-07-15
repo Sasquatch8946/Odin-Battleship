@@ -36,9 +36,6 @@ class Gameboard {
         const board = [];
         for (let i = 0; i < 10; i++) {
             board[i] = new Array(10).fill(0);
-            for (let j = 0; j < 10; j++) {
-                board[i].push(0);
-            }
         }
 
         return board;
