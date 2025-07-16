@@ -9,6 +9,8 @@ class Gameboard {
     }
 
     placeShip (coords1, coords2) {
+        // TODO: perhaps write some lines that organize coordinates from 'low'
+        // to 'high'
         const [x1, y1] = coords1;
         const [x2, y2] = coords2;
         let ship;

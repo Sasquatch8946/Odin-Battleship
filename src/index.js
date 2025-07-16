@@ -24,6 +24,8 @@ function main () {
     DisplayController.populateShips(player1);
     DisplayController.populateGameBoard(player2);
     DisplayController.populateShips(player2);
+
+    DisplayController.activateStartButton();
 }
 
 main();

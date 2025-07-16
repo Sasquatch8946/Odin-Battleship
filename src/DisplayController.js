@@ -49,13 +49,13 @@ const DisplayController = (function () {
                 row.appendChild(column);
             }
         }
+
     }
 
     const populateShips = function (player) {
         const boardName = player.name.replace(' ', '');
         const rows = document.querySelectorAll(`.${boardName} div.row:has(div.column)`);
         player.gameboard.ships.forEach((ship) => {
-            console.log(ship.coordinates);
             ship.coordinates.forEach((coord) => {
                 const [x, y] = coord;
                 const cols = rows[y].querySelectorAll("div.column");
@@ -64,10 +64,39 @@ const DisplayController = (function () {
         });
     }
 
+    const activateStartButton = function () {
+        const btn = document.querySelector("button");
+        btn.addEventListener("click", () => {
+            // highlight player 1's gameboard
+            // pubsub
+            console.log("start button clicked");
+            const player1GameBoard = document.querySelector(".gameboard-wrapper");
+            player1GameBoard.classList.add("turn");
+            player1GameBoard.addEventListener("click", receiveAttack);
+        });
+    }
+
+    const receiveAttack = function (event) {
+        console.log(getXCoordinate(event.target));
+        console.log(getYCoordinate(event.target));
+        // remove eventlistener from current gameboard
+        // pubsub
+    }
+
+    const getXCoordinate = function (element) {
+        const childList = Array.from(element.parentNode.children);
+        return childList.indexOf(element);
+    }
+
+    const getYCoordinate = function (element) {
+        const rowList = Array.from(element.parentNode.parentNode.children);
+        return rowList.indexOf(element.parentNode);
+    }
 
     return {
         populateGameBoard,
         populateShips,
+        activateStartButton,
     }
 })();
 

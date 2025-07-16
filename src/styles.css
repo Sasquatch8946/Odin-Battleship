@@ -1,6 +1,7 @@
 div.container {
     display: flex;
     gap: 50px;
+    justify-content: space-around;
 }
 
 div.gameboard {
@@ -47,4 +48,19 @@ div.row>div:nth-child(-n + 10) {
 
 .ship {
     background-color: lightblue;
+}
+
+.bigger-container {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.bigger-container > button {
+    width: fit-content;
+    align-self: center;
+}
+
+.turn {
+    border: 2px solid firebrick !important;
 }
