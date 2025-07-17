@@ -1,3 +1,5 @@
+import PubSub from "pubsub-js";
+
 const DisplayController = (function () {
 
     const createColumnLabels = function (gameboardDiv) {
@@ -21,7 +23,7 @@ const DisplayController = (function () {
         const parent = document.querySelector("div.container");
         const gb = document.createElement("div");
         gb.classList.add("gameboard");
-        gb.classList.add(`${player.name.replace(' ', '')}`);
+        gb.dataset.user = player.name;
         const gbTitle = document.createElement("div");
         gbTitle.classList.add("gameboard-title");
         gbTitle.innerText = player.name;
@@ -53,8 +55,7 @@ const DisplayController = (function () {
     }
 
     const populateShips = function (player) {
-        const boardName = player.name.replace(' ', '');
-        const rows = document.querySelectorAll(`.${boardName} div.row:has(div.column)`);
+        const rows = document.querySelectorAll(`div.gameboard[data-user='${player.name}'] div.row:has(div.column)`);
         player.gameboard.ships.forEach((ship) => {
             ship.coordinates.forEach((coord) => {
                 const [x, y] = coord;
@@ -70,17 +71,22 @@ const DisplayController = (function () {
             // highlight player 1's gameboard
             // pubsub
             console.log("start button clicked");
-            const player1GameBoard = document.querySelector(".gameboard-wrapper");
-            player1GameBoard.classList.add("turn");
+            const player1GameBoard = document.querySelector(".gameboard");
+            player1GameBoard.parentNode.classList.add("turn");
             player1GameBoard.addEventListener("click", receiveAttack);
         });
     }
 
     const receiveAttack = function (event) {
-        console.log(getXCoordinate(event.target));
-        console.log(getYCoordinate(event.target));
-        // remove eventlistener from current gameboard
+        const x = getXCoordinate(event.target);
+        const y = getYCoordinate(event.target);
+        console.log(`${x}, ${y}`);
+        event.target.parentNode.parentNode.removeEventListener("click", receiveAttack);
+        const username = Array.from(event.target.parentNode.parentNode.classList).at(-1);
         // pubsub
+        PubSub.publish("attackRegistered", {
+
+        });
     }
 
     const getXCoordinate = function (element) {
