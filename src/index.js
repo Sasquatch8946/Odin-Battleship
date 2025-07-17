@@ -1,7 +1,5 @@
 import './styles.css';
-import Gameboard from './Gameboard';
 import Player from './Player';
-import Ship from './Ship';
 import DisplayController from './DisplayController';
 import PubSub from 'pubsub-js';
 
@@ -10,6 +8,16 @@ function main () {
     const player1 = new Player("Player 1");
     const player2 = new Player("Player 2");
     const players = [player1, player2];
+
+    const getPlayer = function (username) {
+        return players.filter((p) => p.name === username)[0];
+    }
+
+    const convertCoordinates = function (coordinates) {
+        const [x, y] = coordinates;
+        return [x-1, y-1];
+    }
+
     player1.gameboard.placeShip([0, 0], [1, 0]);
     player1.gameboard.placeShip([0, 2], [0, 5]);
     player1.gameboard.placeShip([3, 0], [3, 2]);
@@ -29,11 +37,13 @@ function main () {
 
     DisplayController.activateStartButton();
 
-    PubSub.subscribe("attackRegistered", (msg, data) => {
+    PubSub.subscribe("attackRegistered", (_msg, data) => {
         console.log("omg there was an attack");
-        Gameboard.receiveAttack(data);
+        const player = getPlayer(data.username);
+        console.log(player);
+        player.gameboard.receiveAttack(convertCoordinates(data.coordinates), data.username);
     });
-
 }
 
-main();
+main()
+

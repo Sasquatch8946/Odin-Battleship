@@ -2,6 +2,14 @@ import PubSub from "pubsub-js";
 
 const DisplayController = (function () {
 
+    const getUserFromGameboard = function (element) {
+        return element.parentNode.parentNode.dataset.user;
+    }
+
+    const getGameboardByUser = function (username) {
+        return document.querySelector(`div.gameboard[data-user='${username}'`);
+    }
+
     const createColumnLabels = function (gameboardDiv) {
         const letters = 'abcdefghij'.toUpperCase().split('');
         const labelRow = document.createElement("div");
@@ -80,13 +88,12 @@ const DisplayController = (function () {
     const receiveAttack = function (event) {
         const x = getXCoordinate(event.target);
         const y = getYCoordinate(event.target);
+        const coordinates = [x, y];
         console.log(`${x}, ${y}`);
         event.target.parentNode.parentNode.removeEventListener("click", receiveAttack);
-        const username = Array.from(event.target.parentNode.parentNode.classList).at(-1);
+        const username = getUserFromGameboard(event.target);
         // pubsub
-        PubSub.publish("attackRegistered", {
-
-        });
+        PubSub.publish("attackRegistered", {username, coordinates});
     }
 
     const getXCoordinate = function (element) {
@@ -98,6 +105,31 @@ const DisplayController = (function () {
         const rowList = Array.from(element.parentNode.parentNode.children);
         return rowList.indexOf(element.parentNode);
     }
+
+    const convertToDisplayCoordinates = function (coordinates) {
+        const [x, y] = coordinates;
+        return [x+1, y+1];
+    }
+
+    const markHit = function (_msg, data) {
+        const {coordinates, username} = data;
+        //const newCoordinates = convertToDisplayCoordinates(coordinates);
+        const square = getSquare(coordinates, username);
+        square.classList.add("hit");
+        square.innerText = "X";
+        console.log(square);
+    }
+
+    const getSquare = function (coordinates, username) {
+        const [x, y] = coordinates;
+        const gameboard = getGameboardByUser(username);
+        const rows = gameboard.querySelectorAll("div.row:has(div.column)");
+        const columns = rows[y].querySelectorAll("div.column");
+        const hit = columns[x];
+        return hit;
+    }
+
+    PubSub.subscribe("shipHit", markHit);
 
     return {
         populateGameBoard,

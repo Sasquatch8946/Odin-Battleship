@@ -64,3 +64,7 @@ div.row>div:nth-child(-n + 10) {
 .turn {
     border: 2px solid firebrick !important;
 }
+
+.hit {
+
+}

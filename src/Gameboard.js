@@ -1,4 +1,5 @@
 import Ship from './Ship';
+import PubSub from 'pubsub-js';
 
 class Gameboard {
 
@@ -54,12 +55,13 @@ class Gameboard {
         return true;
     }
 
-    receiveAttack (coords) {
-        const [x, y] = coords;
-        const isHit = this.ships.filter((ship) => ship.coordinates.some((c) => Gameboard.#areEqualArrays(c, coords)));
+    receiveAttack (coordinates, username = null) {
+        const [x, y] = coordinates;
+        const isHit = this.ships.filter((ship) => ship.coordinates.some((c) => Gameboard.#areEqualArrays(c, coordinates)));
         if (isHit.length > 0) {
             isHit[0].hit();
             console.log("It's a hit!");
+            PubSub.publish("shipHit", {coordinates, username});
             return true;
         } else {
             console.log("It's a miss :(");
