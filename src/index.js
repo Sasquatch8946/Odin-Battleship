@@ -3,11 +3,13 @@ import Gameboard from './Gameboard';
 import Player from './Player';
 import Ship from './Ship';
 import DisplayController from './DisplayController';
+import PubSub from 'pubsub-js';
 
 
 function main () {
     const player1 = new Player("Player 1");
     const player2 = new Player("Player 2");
+    const players = [player1, player2];
     player1.gameboard.placeShip([0, 0], [1, 0]);
     player1.gameboard.placeShip([0, 2], [0, 5]);
     player1.gameboard.placeShip([3, 0], [3, 2]);
@@ -26,6 +28,12 @@ function main () {
     DisplayController.populateShips(player2);
 
     DisplayController.activateStartButton();
+
+    PubSub.subscribe("attackRegistered", (msg, data) => {
+        console.log("omg there was an attack");
+        Gameboard.receiveAttack(data);
+    });
+
 }
 
 main();
