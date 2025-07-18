@@ -69,6 +69,10 @@ div.row>div:nth-child(-n + 10) {
     position: relative
 }
 
+.miss {
+    position: relative;
+}
+
 span {
     position: absolute;
     height: 100%;
@@ -113,3 +117,13 @@ we are adding innertext*/
     justify-content: center;
     align-items: center;
 }*/
+
+span.miss-dot { 
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    height: 4px;
+    width: 4px;
+    border-radius: 50%;
+    background: #333;
+}

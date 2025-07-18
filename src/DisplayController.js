@@ -131,7 +131,20 @@ const DisplayController = (function () {
         return hit;
     }
 
+    const markMiss = function (_msg, data) {
+        const {username, coordinates} = data;
+        const square = getSquare(coordinates, username);
+        square.classList.add("miss");
+        const s = document.createElement("span");
+        s.classList.add("miss-dot");
+        square.appendChild(s);
+        console.log(square);
+
+    }
+
     PubSub.subscribe("shipHit", markHit);
+
+    PubSub.subscribe("miss", markMiss);
 
     return {
         populateGameBoard,
