@@ -116,7 +116,9 @@ const DisplayController = (function () {
         //const newCoordinates = convertToDisplayCoordinates(coordinates);
         const square = getSquare(coordinates, username);
         square.classList.add("hit");
-        square.innerText = "X";
+        const s = document.createElement("span");
+        s.classList.add("z");
+        square.appendChild(s);
         console.log(square);
     }
 

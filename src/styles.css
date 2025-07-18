@@ -66,5 +66,50 @@ div.row>div:nth-child(-n + 10) {
 }
 
 .hit {
-
+    position: relative
 }
+
+span {
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    overflow: hidden;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+}
+
+span.z::before {
+    content: "";
+    position: absolute;
+    transform: rotate(-45deg);
+    width: 2px;
+    height: 150%;
+    z-index: -1;
+    background: firebrick;
+    left: 50%;
+    top: -25%;
+    margin-top: 1px;
+}
+
+span.z::after {
+    content: "";
+    position: absolute;
+    transform: rotate(-45deg);
+    height: 2px;
+    width: 150%;
+    z-index: -1;
+    background: firebrick;
+    top: 50%;
+    left: -25%;
+    margin-left: -1px;
+}
+
+/* the below declaration assumes
+we are adding innertext*/
+/*.column {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}*/
