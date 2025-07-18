@@ -65,7 +65,8 @@ class Gameboard {
             return true;
         } else {
             console.log("It's a miss :(");
-            this.misses.push(coords);
+            this.misses.push(coordinates);
+            PubSub.publish("miss", {coordinates, username});
             return false;
         }
     }
