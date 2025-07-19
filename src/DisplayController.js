@@ -12,6 +12,14 @@ const DisplayController = (function () {
         currentPlayer = player;
     }
 
+    const pickRandomSquare = function () {
+
+    }
+
+    const computerAttack = function () {
+
+    }
+
     const getUserFromGameboard = function (element) {
         return element.parentNode.parentNode.dataset.user;
     }
@@ -84,9 +92,14 @@ const DisplayController = (function () {
     }
 
     const activateGameboard = function () {
-        const gameboard = getGameboardByUser(getCurrentPlayer().name);
-        gameboard.parentNode.classList.add("turn");
-        gameboard.addEventListener("click", receiveAttack);
+        const currentPlayer = getCurrentPlayer();
+        if (!currentPlayer.isComputer) {
+            const gameboard = getGameboardByUser(getCurrentPlayer().name);
+            gameboard.parentNode.classList.add("turn");
+            gameboard.addEventListener("click", receiveAttack);
+        } else {
+            // automate attacks
+        }
     }
 
     const activateStartButton = function () {
@@ -99,26 +112,35 @@ const DisplayController = (function () {
         });
     }
 
+    const isAlreadyClicked = function (element) {
+        const cl = Array.from(element.classList);
+        return cl.indexOf("hit") > -1 ||
+                cl.indexOf("miss") > -1 ||
+                cl.indexOf("z") > -1;
+    }
+
     const receiveAttack = function (event) {
-        const x = getXCoordinate(event.target);
-        const y = getYCoordinate(event.target);
-        const coordinates = [x, y];
-        console.log(`${x}, ${y}`);
-        event.target.parentNode.parentNode.removeEventListener("click", receiveAttack);
-        event.target.closest("div.gameboard-wrapper").classList.remove("turn");
-        const username = getUserFromGameboard(event.target);
-        // pubsub
-        PubSub.publish("attackRegistered", {username, coordinates});
+        if (!isAlreadyClicked(event.target)) {
+            const x = getXCoordinate(event.target);
+            const y = getYCoordinate(event.target);
+            const coordinates = [x, y];
+            console.log(`${x}, ${y}`);
+            event.target.parentNode.parentNode.removeEventListener("click", receiveAttack);
+            event.target.closest("div.gameboard-wrapper").classList.remove("turn");
+            const username = getUserFromGameboard(event.target);
+            // pubsub
+            PubSub.publish("attackRegistered", {username, coordinates});
+        }
     }
 
     const getXCoordinate = function (element) {
         const childList = Array.from(element.parentNode.children);
-        return childList.indexOf(element);
+        return childList.indexOf(element) - 1;
     }
 
     const getYCoordinate = function (element) {
         const rowList = Array.from(element.parentNode.parentNode.children);
-        return rowList.indexOf(element.parentNode);
+        return rowList.indexOf(element.parentNode) - 1;
     }
 
     const convertToDisplayCoordinates = function (coordinates) {
