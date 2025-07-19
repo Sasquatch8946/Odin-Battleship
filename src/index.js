@@ -6,7 +6,7 @@ import PubSub from 'pubsub-js';
 
 function main () {
     const player1 = new Player("Player 1");
-    const player2 = new Player("Player 2");
+    const player2 = new Player("Player 2", true);
     const players = [player1, player2];
     DisplayController.setCurrentPlayer(player1);
 
@@ -40,7 +40,7 @@ function main () {
 
     PubSub.subscribe("attackRegistered", (_msg, data) => {
         const player = getPlayer(data.username);
-        player.gameboard.receiveAttack(convertCoordinates(data.coordinates), data.username);
+        player.gameboard.receiveAttack(data.coordinates, data.username);
     });
 
     PubSub.subscribe("endOfTurn", (_msg, oldUsername) => {
