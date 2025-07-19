@@ -2,6 +2,16 @@ import PubSub from "pubsub-js";
 
 const DisplayController = (function () {
 
+    let currentPlayer;
+
+    const getCurrentPlayer = function () {
+        return currentPlayer;
+    }
+
+    const setCurrentPlayer = function (player) {
+        currentPlayer = player;
+    }
+
     const getUserFromGameboard = function (element) {
         return element.parentNode.parentNode.dataset.user;
     }
@@ -73,15 +83,19 @@ const DisplayController = (function () {
         });
     }
 
+    const activateGameboard = function () {
+        const gameboard = getGameboardByUser(getCurrentPlayer().name);
+        gameboard.parentNode.classList.add("turn");
+        gameboard.addEventListener("click", receiveAttack);
+    }
+
     const activateStartButton = function () {
         const btn = document.querySelector("button");
         btn.addEventListener("click", () => {
             // highlight player 1's gameboard
             // pubsub
             console.log("start button clicked");
-            const player1GameBoard = document.querySelector(".gameboard");
-            player1GameBoard.parentNode.classList.add("turn");
-            player1GameBoard.addEventListener("click", receiveAttack);
+            activateGameboard();
         });
     }
 
@@ -91,6 +105,7 @@ const DisplayController = (function () {
         const coordinates = [x, y];
         console.log(`${x}, ${y}`);
         event.target.parentNode.parentNode.removeEventListener("click", receiveAttack);
+        event.target.closest("div.gameboard-wrapper").classList.remove("turn");
         const username = getUserFromGameboard(event.target);
         // pubsub
         PubSub.publish("attackRegistered", {username, coordinates});
@@ -113,13 +128,12 @@ const DisplayController = (function () {
 
     const markHit = function (_msg, data) {
         const {coordinates, username} = data;
-        //const newCoordinates = convertToDisplayCoordinates(coordinates);
         const square = getSquare(coordinates, username);
         square.classList.add("hit");
         const s = document.createElement("span");
         s.classList.add("z");
         square.appendChild(s);
-        console.log(square);
+        PubSub.publish("endOfTurn", username);
     }
 
     const getSquare = function (coordinates, username) {
@@ -138,18 +152,26 @@ const DisplayController = (function () {
         const s = document.createElement("span");
         s.classList.add("miss-dot");
         square.appendChild(s);
-        console.log(square);
+        PubSub.publish("endOfTurn", username);
+    }
 
+    const startNewTurn = function (_msg, nextPlayer) {
+        setCurrentPlayer(nextPlayer);
+        activateGameboard();
     }
 
     PubSub.subscribe("shipHit", markHit);
 
     PubSub.subscribe("miss", markMiss);
 
+    PubSub.subscribe("startOfTurn", startNewTurn);
+
     return {
         populateGameBoard,
         populateShips,
         activateStartButton,
+        getCurrentPlayer,
+        setCurrentPlayer,
     }
 })();
 

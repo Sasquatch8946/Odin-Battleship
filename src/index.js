@@ -8,6 +8,7 @@ function main () {
     const player1 = new Player("Player 1");
     const player2 = new Player("Player 2");
     const players = [player1, player2];
+    DisplayController.setCurrentPlayer(player1);
 
     const getPlayer = function (username) {
         return players.filter((p) => p.name === username)[0];
@@ -38,10 +39,13 @@ function main () {
     DisplayController.activateStartButton();
 
     PubSub.subscribe("attackRegistered", (_msg, data) => {
-        console.log("omg there was an attack");
         const player = getPlayer(data.username);
-        console.log(player);
         player.gameboard.receiveAttack(convertCoordinates(data.coordinates), data.username);
+    });
+
+    PubSub.subscribe("endOfTurn", (_msg, oldUsername) => {
+        const nextPlayer = players.filter((p) => p.name !== oldUsername);
+        PubSub.publish("startOfTurn", nextPlayer[0]);
     });
 }
 
