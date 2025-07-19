@@ -1,9 +1,10 @@
 import Gameboard from './Gameboard';
 
 class Player {
-    constructor (name) {
+    constructor (name, isComputer = false) {
         this.gameboard = new Gameboard();
         this.name = name;
+        this.isComputer = isComputer;
     }
 }
 
