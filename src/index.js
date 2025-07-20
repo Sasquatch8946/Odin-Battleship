@@ -6,6 +6,12 @@ import PubSub from 'pubsub-js';
 
 function main () {
 
+    const player1 = new Player("Player 1");
+    const player2 = new Player("Player 2", true);
+    const players = [player1, player2];
+    DisplayController.setCurrentPlayer(player1);
+    DisplayController.setPlayers(players);
+
     const getPlayer = function (username) {
         return players.filter((p) => p.name === username)[0];
     }
