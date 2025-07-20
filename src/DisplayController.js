@@ -14,14 +14,6 @@ const DisplayController = (function () {
     let currentPlayer;
     let players;
 
-    const player1 = new Player("Player 1");
-    const player2 = new Player("Player 2", true);
-    players = [player1, player2];
-    setCurrentPlayer(player1);
-    setPlayers(players);
-
-    
-
     const getOpponentBoard = function () {
         const currentPlayer = getCurrentPlayer();
         const opponent = players.filter((p) => p != currentPlayer)[0];
@@ -32,12 +24,26 @@ const DisplayController = (function () {
         return currentPlayer;
     }
 
-    const pickRandomSquare = function () {
+    const randomIntFromInterval = function (min, max) { // min and max included 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
+    const getRandomSquare = function () {
+        let randomX = randomIntFromInterval(1, 10) + 1;
+        let randomY = randomIntFromInterval(1, 10) + 1;
+        let square = getSquare([randomX, randomY]);
+        while (isAlreadyClicked(square)) {
+            randomX = randomIntFromInterval(1, 10) + 1;
+            randomY = randomIntFromInterval(1, 10) + 1;
+            square = getSquare([randomX, randomY]);
+        }
+
+        return square;
     }
 
     const computerAttack = function () {
-
+        const square = getRandomSquare();
+        sendAttack(square);
     }
 
     const getUserFromGameboard = function (element) {
@@ -116,9 +122,10 @@ const DisplayController = (function () {
         if (!currentPlayer.isComputer) {
             const gameboard = getOpponentBoard();
             gameboard.parentNode.classList.add("turn");
-            gameboard.addEventListener("click", receiveAttack);
+            gameboard.addEventListener("click", receiveManualAttack);
         } else {
             // automate attacks
+            computerAttack();
         }
     }
 
@@ -137,15 +144,19 @@ const DisplayController = (function () {
                 cl.indexOf("z") > -1;
     }
 
-    const receiveAttack = function (event) {
-        if (!isAlreadyClicked(event.target)) {
-            const x = getXCoordinate(event.target);
-            const y = getYCoordinate(event.target);
+    const receiveManualAttack = function (event) {
+        sendAttack(event.target);
+    }
+
+    const sendAttack = function (element) {
+        if (!isAlreadyClicked(element)) {
+            const x = getXCoordinate(element);
+            const y = getYCoordinate(element);
             const coordinates = [x, y];
             console.log(`${x}, ${y}`);
-            event.target.parentNode.parentNode.removeEventListener("click", receiveAttack);
-            event.target.closest("div.gameboard-wrapper").classList.remove("turn");
-            const username = getUserFromGameboard(event.target);
+            element.parentNode.parentNode.removeEventListener("click", receiveManualAttack);
+            element.closest("div.gameboard-wrapper").classList.remove("turn");
+            const username = getUserFromGameboard(element);
             // pubsub
             PubSub.publish("attackRegistered", {username, coordinates});
         }
@@ -168,7 +179,7 @@ const DisplayController = (function () {
 
     const markHit = function (_msg, data) {
         const {coordinates, username} = data;
-        const square = getSquare(coordinates, username);
+        const square = getSquare(coordinates);
         square.classList.add("hit");
         const s = document.createElement("span");
         s.classList.add("z");
@@ -176,9 +187,9 @@ const DisplayController = (function () {
         PubSub.publish("endOfTurn", username);
     }
 
-    const getSquare = function (coordinates, username) {
+    const getSquare = function (coordinates) {
         const [x, y] = coordinates;
-        const gameboard = getGameboardByUser(username);
+        const gameboard = getOpponentBoard();
         const rows = gameboard.querySelectorAll("div.row:has(div.column)");
         const columns = rows[y].querySelectorAll("div.column");
         const hit = columns[x];
@@ -187,7 +198,7 @@ const DisplayController = (function () {
 
     const markMiss = function (_msg, data) {
         const {username, coordinates} = data;
-        const square = getSquare(coordinates, username);
+        const square = getSquare(coordinates);
         square.classList.add("miss");
         const s = document.createElement("span");
         s.classList.add("miss-dot");
