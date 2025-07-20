@@ -24,6 +24,13 @@ const DisplayController = (function () {
         return currentPlayer;
     }
 
+    const nextTurn = function () {
+        const currentPlayer = getCurrentPlayer();
+        const nextPlayer = players.filter((p) => p != currentPlayer)[0];
+        setCurrentPlayer(nextPlayer);
+        activateGameboard();
+    }
+
     const randomIntFromInterval = function (min, max) { // min and max included 
         return Math.floor(Math.random() * (max - min + 1) + min);
     }
@@ -157,7 +164,6 @@ const DisplayController = (function () {
             element.parentNode.parentNode.removeEventListener("click", receiveManualAttack);
             element.closest("div.gameboard-wrapper").classList.remove("turn");
             const username = getUserFromGameboard(element);
-            // pubsub
             PubSub.publish("attackRegistered", {username, coordinates});
         }
     }
@@ -184,7 +190,7 @@ const DisplayController = (function () {
         const s = document.createElement("span");
         s.classList.add("z");
         square.appendChild(s);
-        PubSub.publish("endOfTurn", username);
+        nextTurn();
     }
 
     const getSquare = function (coordinates) {
@@ -203,7 +209,7 @@ const DisplayController = (function () {
         const s = document.createElement("span");
         s.classList.add("miss-dot");
         square.appendChild(s);
-        PubSub.publish("endOfTurn", username);
+        nextTurn();
     }
 
     const startNewTurn = function (_msg, nextPlayer) {
