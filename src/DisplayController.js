@@ -1,15 +1,35 @@
 import PubSub from "pubsub-js";
+import Player from "./Player";
 
 const DisplayController = (function () {
 
-    let currentPlayer;
-
-    const getCurrentPlayer = function () {
-        return currentPlayer;
+    const setPlayers = function (playersArray) {
+        players = playersArray;
     }
 
     const setCurrentPlayer = function (player) {
         currentPlayer = player;
+    }
+
+    let currentPlayer;
+    let players;
+
+    const player1 = new Player("Player 1");
+    const player2 = new Player("Player 2", true);
+    players = [player1, player2];
+    setCurrentPlayer(player1);
+    setPlayers(players);
+
+    
+
+    const getOpponentBoard = function () {
+        const currentPlayer = getCurrentPlayer();
+        const opponent = players.filter((p) => p != currentPlayer)[0];
+        return getGameboardByUser(opponent.name);
+    }
+
+    const getCurrentPlayer = function () {
+        return currentPlayer;
     }
 
     const pickRandomSquare = function () {
@@ -52,7 +72,7 @@ const DisplayController = (function () {
         gb.dataset.user = player.name;
         const gbTitle = document.createElement("div");
         gbTitle.classList.add("gameboard-title");
-        gbTitle.innerText = player.name;
+        gbTitle.innerText = `${player.name} grid`;
         const gbWrapper = document.createElement("div");
         gbWrapper.classList.add("gameboard-wrapper");
         gbWrapper.appendChild(gbTitle);
@@ -94,7 +114,7 @@ const DisplayController = (function () {
     const activateGameboard = function () {
         const currentPlayer = getCurrentPlayer();
         if (!currentPlayer.isComputer) {
-            const gameboard = getGameboardByUser(getCurrentPlayer().name);
+            const gameboard = getOpponentBoard();
             gameboard.parentNode.classList.add("turn");
             gameboard.addEventListener("click", receiveAttack);
         } else {
@@ -105,8 +125,6 @@ const DisplayController = (function () {
     const activateStartButton = function () {
         const btn = document.querySelector("button");
         btn.addEventListener("click", () => {
-            // highlight player 1's gameboard
-            // pubsub
             console.log("start button clicked");
             activateGameboard();
         });
@@ -194,6 +212,7 @@ const DisplayController = (function () {
         activateStartButton,
         getCurrentPlayer,
         setCurrentPlayer,
+        setPlayers,
     }
 })();
 
