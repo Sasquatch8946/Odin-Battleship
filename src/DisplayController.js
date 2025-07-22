@@ -36,12 +36,12 @@ const DisplayController = (function () {
     }
 
     const getRandomSquare = function () {
-        let randomX = randomIntFromInterval(1, 10) + 1;
-        let randomY = randomIntFromInterval(1, 10) + 1;
+        let randomX = randomIntFromInterval(1, 10) - 1; // adding 1 sometimes results in 11
+        let randomY = randomIntFromInterval(1, 10) - 1;
         let square = getSquare([randomX, randomY]);
         while (isAlreadyClicked(square)) {
-            randomX = randomIntFromInterval(1, 10) + 1;
-            randomY = randomIntFromInterval(1, 10) + 1;
+            randomX = randomIntFromInterval(1, 10) - 1; // adding 1 here sometimes resulted in 11
+            randomY = randomIntFromInterval(1, 10) - 1; 
             square = getSquare([randomX, randomY]);
         }
 

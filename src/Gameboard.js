@@ -16,7 +16,7 @@ class Gameboard {
         const [x2, y2] = coords2;
         let ship;
         if (y2 - y1 > 0) {
-            ship = new Ship(y2 - y1);
+            ship = new Ship((y2 - y1) + 1);
             for (let i = y1; i < y2 + 1; i++) {
                 this.board[x1][i] = 1;
                 ship.coordinates.push([x1, i]);
@@ -24,7 +24,7 @@ class Gameboard {
         }
 
         if (x2 - x1 > 0) {
-            ship = new Ship(x2 - x1);
+            ship = new Ship((x2 - x1) + 1);
             for (let i = x1; i < x2 + 1; i++) {
                 this.board[i][y1] = 1;
                 ship.coordinates.push([i, y1]);
