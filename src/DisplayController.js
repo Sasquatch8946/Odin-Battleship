@@ -11,6 +11,7 @@ const DisplayController = (function () {
         currentPlayer = player;
     }
 
+
     let currentPlayer;
     let players;
 
@@ -24,10 +25,16 @@ const DisplayController = (function () {
         return currentPlayer;
     }
 
+    const setBannerMessage = function (msg) {
+        const msgDiv = document.querySelector("div.messages");
+        msgDiv.innerText = msg;
+    }
+
     const nextTurn = function () {
         const currentPlayer = getCurrentPlayer();
         const nextPlayer = players.filter((p) => p != currentPlayer)[0];
         setCurrentPlayer(nextPlayer);
+        setBannerMessage(`${nextPlayer.name}'s turn`);
         activateGameboard();
     }
 

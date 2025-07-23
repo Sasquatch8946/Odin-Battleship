@@ -110,14 +110,6 @@ span.z::after {
     margin-left: -1px;
 }
 
-/* the below declaration assumes
-we are adding innertext*/
-/*.column {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}*/
-
 span.miss-dot { 
     position: absolute;
     top: 50%;
@@ -126,4 +118,11 @@ span.miss-dot {
     width: 4px;
     border-radius: 50%;
     background: #333;
+}
+
+.messages {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
 }
