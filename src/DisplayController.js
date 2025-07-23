@@ -21,6 +21,11 @@ const DisplayController = (function () {
         return getGameboardByUser(opponent.name);
     }
 
+    const getOpponent = function (username) {
+        const opponent = players.filter((p) => p.name !== username)[0];
+        return opponent;
+    }
+
     const getCurrentPlayer = function () {
         return currentPlayer;
     }
@@ -133,6 +138,7 @@ const DisplayController = (function () {
 
     const activateGameboard = function () {
         const currentPlayer = getCurrentPlayer();
+        setBannerMessage(`${currentPlayer.name}'s turn`);
         if (!currentPlayer.isComputer) {
             const gameboard = getOpponentBoard();
             gameboard.parentNode.classList.add("turn");
@@ -224,11 +230,25 @@ const DisplayController = (function () {
         activateGameboard();
     }
 
+    const deactivateGameboard = function () {
+        const gameboard = getOpponentBoard();
+        gameboard.parentNode.classList.remove("turn");
+        gameboard.removeEventListener("click", receiveManualAttack);
+    }
+
+    const endGame = function (_msg, losingPlayer) {
+        const winner = getOpponent(losingPlayer);
+        setBannerMessage(`Game over. ${winner.name} won.`);
+        deactivateGameboard();    
+    }
+
     PubSub.subscribe("shipHit", markHit);
 
     PubSub.subscribe("miss", markMiss);
 
     PubSub.subscribe("startOfTurn", startNewTurn);
+
+    PubSub.subscribe("endGame", endGame);
 
     return {
         populateGameBoard,

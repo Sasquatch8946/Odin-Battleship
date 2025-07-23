@@ -61,17 +61,20 @@ class Gameboard {
         if (isHit.length > 0) {
             isHit[0].hit();
             console.log("It's a hit!");
-            PubSub.publish("shipHit", {coordinates, username});
+            //PubSub.publish("shipHit", {coordinates, username});
             const isSunk = isHit[0].isSunk();
             if (isSunk) {
                 console.log("ship is sunk");
                 const allSunk = this.allShipsSunk();
                 if (allSunk) {
                     console.log("All ships have been sunk. Game over.");
-                    PubSub.publish("endgame", username);
+                    PubSub.publish("endGame", username);
                 } else {
                     console.log("Some ships have not been sunk. Keep playing.");
+                    PubSub.publish("shipHit", {coordinates, username});
                 }
+            } else {
+                PubSub.publish("shipHit", {coordinates, username});
             }
             return true;
         } else {
