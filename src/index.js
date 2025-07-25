@@ -16,11 +16,6 @@ function main () {
         return players.filter((p) => p.name === username)[0];
     }
 
-    const convertCoordinates = function (coordinates) {
-        const [x, y] = coordinates;
-        return [x-1, y-1];
-    }
-
     player1.gameboard.placeShip([0, 0], [1, 0]);
     player1.gameboard.placeShip([0, 2], [0, 5]);
     player1.gameboard.placeShip([3, 0], [3, 2]);
