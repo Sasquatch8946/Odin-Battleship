@@ -126,3 +126,9 @@ span.miss-dot {
     align-items: center;
     font-weight: bold;
 }
+
+.button-container {
+    display: flex;
+    gap: 5px;
+    justify-content: center;
+}

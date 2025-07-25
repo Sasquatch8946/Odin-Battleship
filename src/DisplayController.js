@@ -149,13 +149,22 @@ const DisplayController = (function () {
         }
     }
 
-    const activateStartButton = function () {
-        const btn = document.querySelector("button");
+    const activateComputerStart = function () {
+        const btn = document.querySelector("button.computer");
         btn.addEventListener("click", () => {
-            console.log("start button clicked");
+            PubSub.publish("gameType", "computer");
             activateGameboard();
         });
     }
+
+    const activateHumanStart = function () {
+        const btn = document.querySelector("button.human");
+        btn.addEventListener("click", () => {
+            PubSub.publish("gameType", "human");
+            activateGameboard();
+        });
+    }
+
 
     const isAlreadyClicked = function (element) {
         const cl = Array.from(element.classList);
@@ -253,7 +262,7 @@ const DisplayController = (function () {
     return {
         populateGameBoard,
         populateShips,
-        activateStartButton,
+        activateComputerStart,
         getCurrentPlayer,
         setCurrentPlayer,
         setPlayers,

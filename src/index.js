@@ -7,7 +7,7 @@ import PubSub from 'pubsub-js';
 function main () {
 
     const player1 = new Player("Player 1");
-    const player2 = new Player("Player 2", true);
+    const player2 = new Player("Player 2");
     const players = [player1, player2];
     DisplayController.setCurrentPlayer(player1);
     DisplayController.setPlayers(players);
@@ -38,7 +38,7 @@ function main () {
     DisplayController.populateGameBoard(player2);
     DisplayController.populateShips(player2);
 
-    DisplayController.activateStartButton();
+    DisplayController.activateComputerStart();
 
     PubSub.subscribe("attackRegistered", (_msg, data) => {
         const player = getPlayer(data.username);
@@ -49,6 +49,12 @@ function main () {
         const nextPlayer = players.filter((p) => p.name !== oldUsername);
         PubSub.publish("startOfTurn", nextPlayer[0]);
     });
+
+    PubSub.subscribe("gameType"), (_msg, gameType) => {
+        if (gameType === "computer") {
+            player2.setPlayerToComputer();
+        }
+    }
 }
 
 main()

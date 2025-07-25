@@ -6,6 +6,10 @@ class Player {
         this.name = name;
         this.isComputer = isComputer;
     }
+
+    setPlayerToComputer () {
+        this.isComputer = true;
+    }
 }
 
 export default Player;
