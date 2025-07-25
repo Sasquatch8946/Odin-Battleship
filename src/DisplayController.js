@@ -263,6 +263,7 @@ const DisplayController = (function () {
         populateGameBoard,
         populateShips,
         activateComputerStart,
+        activateHumanStart,
         getCurrentPlayer,
         setCurrentPlayer,
         setPlayers,

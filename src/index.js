@@ -39,6 +39,7 @@ function main () {
     DisplayController.populateShips(player2);
 
     DisplayController.activateComputerStart();
+    DisplayController.activateHumanStart();
 
     PubSub.subscribe("attackRegistered", (_msg, data) => {
         const player = getPlayer(data.username);
@@ -50,11 +51,11 @@ function main () {
         PubSub.publish("startOfTurn", nextPlayer[0]);
     });
 
-    PubSub.subscribe("gameType"), (_msg, gameType) => {
+    PubSub.subscribe("gameType", (_msg, gameType) => {
         if (gameType === "computer") {
             player2.setPlayerToComputer();
         }
-    }
+    });
 }
 
 main()
