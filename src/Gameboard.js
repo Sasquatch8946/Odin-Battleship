@@ -131,6 +131,17 @@ class Gameboard {
             ]
 
         const validPositions = endPositions.filter((pos) => {
+            // need to test two conditions
+            // 1. coordinates are in bounds
+            // 2. every square between start and end
+            //    is not occupied by another ship
+            // need to implement a function that sorts the coordinates
+            // from low to high
+            // considered only going in positiveX and positiveY directions
+            // but realized this was make it impossible to calculate placements
+            // from the rightmost edge
+            // had already thought of implementing sorting
+            // in the placeShip method
             return (pos[0] < 11 && pos[0] > -1) &&
                 (pos[1] < 11 && pos[1] > -1);
         });
