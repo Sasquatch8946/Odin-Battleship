@@ -32,9 +32,13 @@ describe("Gameboard module", () => {
     });
 
     test("The allShipsSunk method should return true if all ships on the board are sunk", () => {
-        for (let i = 0; i < gb.ships[0].length; i++) {
+        for (let i = 0; i < gb.ships[0].length - 1; i++) {
             gb.ships[0].hit();
         }
         expect(gb.allShipsSunk()).toBe(true);
+    });
+
+    test("The createRandomShip method should return a new ship", () => {
+
     });
 });
