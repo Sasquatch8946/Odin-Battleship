@@ -18,16 +18,24 @@ class Gameboard {
         if (y2 - y1 > 0) {
             ship = new Ship((y2 - y1) + 1);
             for (let i = y1; i < y2 + 1; i++) {
-                this.board[x1][i] = 1;
-                ship.coordinates.push([x1, i]);
+                if (this.board[x1][i] === 1) {
+                    throw new Error(`coordinate is already occupied; try placing ship elsewhere`);
+                } else {
+                    this.board[x1][i] = 1;
+                    ship.coordinates.push([x1, i]);
+                }
             }
         }
 
         if (x2 - x1 > 0) {
             ship = new Ship((x2 - x1) + 1);
             for (let i = x1; i < x2 + 1; i++) {
-                this.board[i][y1] = 1;
-                ship.coordinates.push([i, y1]);
+                if (this.board[i][y1] === 1) {
+                    throw new Error(`coordinate is already occupied; try placing ship elsewhere`);
+                } else {
+                    this.board[i][y1] = 1;
+                    ship.coordinates.push([i, y1]);
+                }
             }
         }
 
@@ -89,12 +97,66 @@ class Gameboard {
         return this.ships.every((ship) => ship.isSunk());
     }
 
-    createRandomShip () {
+    createRandomShip (shipLength) {
+        return new Ship(shipLength); 
+    }
+
+    squareHasShip (coords) {
+        const [x, y] = coords;
+        return this.board[x][y] === 1;
+    }
+
+    goPositiveX (startSquare, length) {
+
+    }
+
+    goNegativeX (startSquare, length) {
+
+    }
+
+    goPositiveY (startSquare, length) {
+
+    }
+
+    goNegativeY (startSquare, length) {
+
+    }
+
+    calculatePositions (startSquare, length) {
+        const [x, y] = startSquare;
+        const endPositions = [[x + length, y],
+                [x - length, y],
+                [x, y - length],
+                [x, y + length]
+            ]
+
+        const validPositions = endPositions.filter((pos) => {
+            return (pos[0] < 11 && pos[0] > -1) &&
+                (pos[1] < 11 && pos[1] > -1);
+        });
+
+        return validPositions;
         
     }
 
+    placeRandomShip (randomShip) {
+        const startSquare = this.#getRandomStartSquare()
+    }
 
+    static #randomIntFromInterval (min, max) { // min and max included 
+        return Math.floor(Math.random() * (max - min + 1) + min);
+    }
 
+    #getRandomStartSquare () {
+        let randomX = Gameboard.#randomIntFromInterval(1, 10) - 1; // adding 1 sometimes results in 11
+        let randomY = Gameboard.#randomIntFromInterval(1, 10) - 1;
+        while (this.board[randomX][randomY] === 1) {
+            randomX = Gameboard.#randomIntFromInterval(1, 10) - 1;
+            randomY = Gameboard.#randomIntFromInterval(1, 10) - 1;
+        }
+
+        return [randomX, randomY];
+    }
 }
 
 

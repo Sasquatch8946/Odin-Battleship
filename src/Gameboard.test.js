@@ -19,6 +19,12 @@ describe("Gameboard module", () => {
         expect(gb.board.every((row) => row.length === 10)).toBe(true);
     });
 
+    test("The placeShip method should throw an error if one attempts to place a ship where one already exists", () => {
+        expect(() => {
+            gb.placeShip([2, 2], [2, 6]);
+        }).toThrow('coordinate is already occupied; try placing ship elsewhere');
+    });
+
     test("Should have a receiveAttack method that increments hit count on ship and returns true if hit", () => {
         expect(gb.receiveAttack([3, 2])).toBe(true);
     });
@@ -39,6 +45,21 @@ describe("Gameboard module", () => {
     });
 
     test("The createRandomShip method should return a new ship", () => {
-
+        expect(gb.createRandomShip(5).length).toBe(5);
     });
+
+    test("The squareHasShip method should return true if a set of coordinates is already occupied by a ship", () => {
+        expect(gb.squareHasShip([2, 2])).toBe(true);
+    });
+
+    test("The placeRandomShip method should increase the ship count", () => {
+        const randomShip = gb.createRandomShip(5);
+        gb.placeRandomShip(randomShip);
+        expect(gb.ships.length).toBe(2);
+    });
+
+    test("The calculatePositions method should generate all possible end squares for a given starting point and length", () => {
+        expect(gb.calculatePositions([0, 0], 3)).toEqual(expect.arrayContaining([[0, 3], [3, 0]]));
+    });
+
 });
