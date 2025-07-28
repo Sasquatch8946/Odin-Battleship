@@ -62,4 +62,11 @@ describe("Gameboard module", () => {
         expect(gb.calculatePositions([0, 0], 3)).toEqual(expect.arrayContaining([[0, 3], [3, 0]]));
     });
 
+    test("Should be able to sort coordinates", () => {
+        const unsortedArr = [[2, 0], [0, 0]];
+        const expected = [[0, 0], [2, 0]];
+        expect(gb.sortCoordinates(unsortedArr)).toStrictEqual(expected);
+        // comment
+    });
+
 });

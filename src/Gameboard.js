@@ -106,19 +106,30 @@ class Gameboard {
         return this.board[x][y] === 1;
     }
 
-    goPositiveX (startSquare, length) {
+    rangeHasShip(start, end) {
+        const [x1, y1] = start;
+        const [x2, y2] = end;
+        let hasShip = false;
 
-    }
+        if (x2 > x1) {
+            for (let i = x1; i < x2 + 1; i++) {
+                if (this.board[i][y1] === 1) {
+                    hasShip = true;
+                    break;
+                }
+            }
+        }
 
-    goNegativeX (startSquare, length) {
+        if (y2 > y1) {
+            for (let i = y1; i < y2 + 1; i++) {
+                if (this.board[x1][i] === 1) {
+                    hasShip = true;
+                    break;
+                }
+            }
+        }
 
-    }
-
-    goPositiveY (startSquare, length) {
-
-    }
-
-    goNegativeY (startSquare, length) {
+        return hasShip;
 
     }
 
@@ -142,8 +153,10 @@ class Gameboard {
             // from the rightmost edge
             // had already thought of implementing sorting
             // in the placeShip method
-            return (pos[0] < 11 && pos[0] > -1) &&
-                (pos[1] < 11 && pos[1] > -1);
+            const sortedCoordinates = this.sortCoordinates([startSquare, pos]);
+            return this.#isWithinBoundary(pos) && !this.rangeHasShip(sortedCoordinates[0],
+                sortedCoordinates[1]
+            );
         });
 
         return validPositions;
@@ -151,7 +164,17 @@ class Gameboard {
     }
 
     placeRandomShip (randomShip) {
-        const startSquare = this.#getRandomStartSquare()
+        let startSquare = this.#getRandomStartSquare()
+        let positions = this.calculatePositions(startSquare, randomShip.length);
+        console.log(startSquare);
+        console.log(positions);
+        while (positions.length === 0) {
+            startSquare = this.#getRandomStartSquare();
+            positions = this.calculatePositions(startSquare, randomShip.length);
+        }
+        const randomIndex = Gameboard.#randomIntFromInterval(0, positions.length - 1);
+        console.log(randomIndex);
+        this.placeShip(startSquare, positions[randomIndex]);
     }
 
     static #randomIntFromInterval (min, max) { // min and max included 
@@ -167,6 +190,29 @@ class Gameboard {
         }
 
         return [randomX, randomY];
+    }
+
+    #isWithinBoundary (coordinates) {
+        const [x, y] = coordinates;
+        return (x < 11 && x > -1) &&
+                (y < 11 && y > -1);
+
+    }
+
+    sortCoordinates (coordinatePair) {
+        let first;
+        let second;
+        const items = coordinatePair.flat();
+        const [x1, y1, x2, y2] = items;
+            if (x1 < x2 || y1 < y2) {
+            first = [x1, y1];
+            second = [x2, y2];
+        } else if (x2 < x1 || y2 < y1) {
+            first = [x2, y2];
+            second = [x1, y1];
+        } 
+
+        return [first, second];
     }
 }
 
