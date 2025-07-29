@@ -170,18 +170,22 @@ class Gameboard {
         
     }
 
-    placeRandomShip (randomShip) {
+    placeRandomShip (shipLength) {
         let startSquare = this.#getRandomStartSquare()
-        let positions = this.calculatePositions(startSquare, randomShip.length);
+        let positions = this.calculatePositions(startSquare, shipLength);
         console.log(startSquare);
         console.log(positions);
         while (positions.length === 0) {
             startSquare = this.#getRandomStartSquare();
-            positions = this.calculatePositions(startSquare, randomShip.length);
+            positions = this.calculatePositions(startSquare, shipLength);
         }
         const randomIndex = Gameboard.#randomIntFromInterval(0, positions.length - 1);
         console.log(randomIndex);
-        this.placeShip(startSquare, positions[randomIndex]);
+        // need to sort coordinates so placeShip method works properly
+        // and doesn't produce a ship that is undefined
+        // if not sorted we can get a ship with a negative length
+        const sortedCoordinates = this.sortCoordinates([startSquare, positions[randomIndex]]);
+        this.placeShip(sortedCoordinates[0], sortedCoordinates[1]);
     }
 
     static #randomIntFromInterval (min, max) { // min and max included 
@@ -228,8 +232,7 @@ class Gameboard {
             this.ships = [];
         }
         shipLengths.forEach((shipLength) => {
-            const ship = new Ship(shipLength);
-            this.placeRandomShip(ship);
+            this.placeRandomShip(shipLength);
         });
     }
 }
