@@ -66,7 +66,17 @@ describe("Gameboard module", () => {
         const unsortedArr = [[2, 0], [0, 0]];
         const expected = [[0, 0], [2, 0]];
         expect(gb.sortCoordinates(unsortedArr)).toStrictEqual(expected);
-        // comment
+    });
+
+    test("Should be able to randomize ship placements without changing total number of ships", () => {
+        gb.randomizeShipPlacements();
+        expect(gb.ships.length).toBe(5);
+    });
+
+    test("Should be able to randomize ship placements and none of the ships should be undefined", () => {
+        gb.randomizeShipPlacements();
+        const undef = gb.ships.filter((s) => s === undefined);
+        expect(undef.length).toBe(0);
     });
 
 });
