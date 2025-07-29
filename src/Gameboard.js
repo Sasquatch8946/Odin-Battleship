@@ -111,22 +111,29 @@ class Gameboard {
         const [x2, y2] = end;
         let hasShip = false;
 
-        if (x2 > x1) {
-            for (let i = x1; i < x2 + 1; i++) {
-                if (this.board[i][y1] === 1) {
-                    hasShip = true;
-                    break;
+        try {
+            if (x2 > x1) {
+                for (let i = x1; i < x2 + 1; i++) {
+                    if (this.board[i][y1] === 1) {
+                        hasShip = true;
+                        break;
+                    }
                 }
             }
-        }
 
-        if (y2 > y1) {
-            for (let i = y1; i < y2 + 1; i++) {
-                if (this.board[x1][i] === 1) {
-                    hasShip = true;
-                    break;
+            if (y2 > y1) {
+                for (let i = y1; i < y2 + 1; i++) {
+                    if (this.board[x1][i] === 1) {
+                        hasShip = true;
+                        break;
+                    }
                 }
             }
+        } catch (e) {
+            console.log(`first pair of coords: ${x1}, ${y1}`);
+            console.log(`second pair of coords: ${x2}, ${y2}`);
+            console.log(this.board);
+            console.error(e.message);
         }
 
         return hasShip;
@@ -182,11 +189,11 @@ class Gameboard {
     }
 
     #getRandomStartSquare () {
-        let randomX = Gameboard.#randomIntFromInterval(1, 10) - 1; // adding 1 sometimes results in 11
-        let randomY = Gameboard.#randomIntFromInterval(1, 10) - 1;
+        let randomX = Gameboard.#randomIntFromInterval(0, 9); // adding 1 sometimes results in 11
+        let randomY = Gameboard.#randomIntFromInterval(0, 9);
         while (this.board[randomX][randomY] === 1) {
-            randomX = Gameboard.#randomIntFromInterval(1, 10) - 1;
-            randomY = Gameboard.#randomIntFromInterval(1, 10) - 1;
+            randomX = Gameboard.#randomIntFromInterval(0, 9);
+            randomY = Gameboard.#randomIntFromInterval(0, 9);
         }
 
         return [randomX, randomY];
@@ -194,8 +201,8 @@ class Gameboard {
 
     #isWithinBoundary (coordinates) {
         const [x, y] = coordinates;
-        return (x < 11 && x > -1) &&
-                (y < 11 && y > -1);
+        return (x < 10 && x > -1) &&
+                (y < 10 && y > -1);
 
     }
 
@@ -204,7 +211,7 @@ class Gameboard {
         let second;
         const items = coordinatePair.flat();
         const [x1, y1, x2, y2] = items;
-            if (x1 < x2 || y1 < y2) {
+        if (x1 < x2 || y1 < y2) {
             first = [x1, y1];
             second = [x2, y2];
         } else if (x2 < x1 || y2 < y1) {
@@ -213,6 +220,17 @@ class Gameboard {
         } 
 
         return [first, second];
+    }
+
+    randomizeShipPlacements () {
+        const shipLengths = [5, 4, 3, 3, 2];
+        if (this.ships.length > 0) {
+            this.ships = [];
+        }
+        shipLengths.forEach((shipLength) => {
+            const ship = new Ship(shipLength);
+            this.placeRandomShip(ship);
+        });
     }
 }
 
