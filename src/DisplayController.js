@@ -165,6 +165,13 @@ const DisplayController = (function () {
         });
     }
 
+    const activateRandomizer = function () {
+        const btn = document.querySelector("button.randomizer");
+        btn.addEventListener("click", () => {
+            PubSub.publish("randomize");
+        });
+    }
+
 
     const isAlreadyClicked = function (element) {
         const cl = Array.from(element.classList);
@@ -251,6 +258,13 @@ const DisplayController = (function () {
         deactivateGameboard();    
     }
 
+    const dePopulateShips = function (_msg) {
+        const ships = Array.from(document.querySelectorAll("div.ship"));
+        ships.forEach((ship) => {
+            ship.classList.remove("ship");
+        });
+    }
+
     PubSub.subscribe("shipHit", markHit);
 
     PubSub.subscribe("miss", markMiss);
@@ -267,6 +281,8 @@ const DisplayController = (function () {
         getCurrentPlayer,
         setCurrentPlayer,
         setPlayers,
+        activateRandomizer,
+        dePopulateShips,
     }
 })();
 
