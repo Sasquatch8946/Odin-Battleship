@@ -174,11 +174,14 @@ class Gameboard {
     placeRandomShip (shipLength) {
         let startSquare = this.#getRandomStartSquare()
         let positions = this.calculatePositions(startSquare, shipLength);
-        console.log(startSquare);
-        console.log(positions);
+        console.log(`at placeRandomShip, startSquare: ${startSquare}`);
+        console.log(`at placeRandomShip, positions: ${positions}`);
         while (positions.length === 0) {
+            console.log("regenerating start square since last one didn't return a valid position");
             startSquare = this.#getRandomStartSquare();
             positions = this.calculatePositions(startSquare, shipLength);
+            console.log(`at placeRandomShip, startSquare: ${startSquare}`);
+            console.log(`at placeRandomShip, positions: ${positions}`);
         }
         const randomIndex = Gameboard.#randomIntFromInterval(0, positions.length - 1);
         console.log(randomIndex);
@@ -231,6 +234,7 @@ class Gameboard {
         const shipLengths = [5, 4, 3, 3, 2];
         if (this.ships.length > 0) {
             this.ships = [];
+            this.board = this.initializeBoard();
         }
         shipLengths.forEach((shipLength) => {
             this.placeRandomShip(shipLength);
