@@ -141,11 +141,12 @@ class Gameboard {
     }
 
     calculatePositions (startSquare, length) {
+        const distance = length - 1;
         const [x, y] = startSquare;
-        const endPositions = [[x + length, y],
-                [x - length, y],
-                [x, y - length],
-                [x, y + length]
+        const endPositions = [[x + distance, y],
+                [x - distance, y],
+                [x, y - distance],
+                [x, y + distance]
             ]
 
         const validPositions = endPositions.filter((pos) => {
