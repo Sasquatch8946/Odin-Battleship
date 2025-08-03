@@ -172,6 +172,18 @@ const DisplayController = (function () {
         });
     }
 
+    const createDragAndDrop = function () {
+        const container = document.querySelector("div.bigger-container");
+        const gridArea = document.createElement("div");
+        gridArea.classList.add("grid-area");
+        container.appendChild(gridArea);
+    }
+
+    const activateManualPlacement = function () {
+        const btn = document.querySelector("button.manual-placement");
+        btn.addEventListener("click", createDragAndDrop);
+    }
+
 
     const isAlreadyClicked = function (element) {
         const cl = Array.from(element.classList);
@@ -283,6 +295,7 @@ const DisplayController = (function () {
         setPlayers,
         activateRandomizer,
         dePopulateShips,
+        activateManualPlacement,
     }
 })();
 

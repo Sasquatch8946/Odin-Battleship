@@ -36,6 +36,7 @@ function main () {
     DisplayController.activateComputerStart();
     DisplayController.activateHumanStart();
     DisplayController.activateRandomizer();
+    DisplayController.activateManualPlacement();
 
     PubSub.subscribe("attackRegistered", (_msg, data) => {
         const player = getPlayer(data.username);
