@@ -132,3 +132,19 @@ span.miss-dot {
     gap: 5px;
     justify-content: center;
 }
+
+.grid-area {
+    display: flex;
+    gap: 5px;
+}
+
+.draggable-ship {
+    display: grid;
+}
+
+.shipSquare {
+    height: 50px;
+    width: 50px;
+    background-color: lightblue;
+}
+

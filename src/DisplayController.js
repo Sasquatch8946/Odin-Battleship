@@ -173,10 +173,24 @@ const DisplayController = (function () {
     }
 
     const createDragAndDrop = function () {
+        const lengths = [5, 4, 3, 3, 2];
         const container = document.querySelector("div.bigger-container");
         const gridArea = document.createElement("div");
         gridArea.classList.add("grid-area");
         container.appendChild(gridArea);
+        for (let i = 0; i < lengths.length; i++) {
+            const shipWrapper = document.createElement("div");
+            shipWrapper.classList.add("ship-wrapper");
+            gridArea.appendChild(shipWrapper);
+            const ship = document.createElement("div");
+            ship.classList.add("draggable-ship");
+            shipWrapper.appendChild(ship);
+            for (let j = 0; j < lengths[i]; j++) {
+                const shipSquare = document.createElement("div");
+                shipSquare.classList.add("shipSquare");
+                ship.appendChild(shipSquare);
+            }
+        }
     }
 
     const activateManualPlacement = function () {
