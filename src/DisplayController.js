@@ -1,5 +1,4 @@
 import PubSub from "pubsub-js";
-import Player from "./Player";
 
 const DisplayController = (function () {
 
