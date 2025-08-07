@@ -101,6 +101,10 @@ const DisplayController = (function () {
         event.preventDefault();
         console.log("drop event fired");
         event.target.classList.add("ship");
+        const numChildren = event.dataTransfer.getData("childrenText");
+        const direction = event.dataTransfer.getData("directionText");
+        console.log(numChildren);
+        console.log(direction);
     }
 
     const populateGameBoard = function (player) {
@@ -205,7 +209,8 @@ const DisplayController = (function () {
     }
 
     const dragstart = function (event) {
-
+        event.dataTransfer.setData("childrenText", event.target.parentNode.children.length);
+        event.dataTransfer.setData("directionText", getComputedStyle(event.target.parentNode).flexDirection);
     }
 
     const createDragAndDrop = function () {
