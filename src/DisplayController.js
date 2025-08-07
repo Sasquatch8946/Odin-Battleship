@@ -98,12 +98,41 @@ const DisplayController = (function () {
 
     const drop = function (event) {
         event.preventDefault();
+        const username = event.target.closest("div.gameboard").dataset.user;
         console.log("drop event fired");
         event.target.classList.add("ship");
-        const numChildren = event.dataTransfer.getData("childrenText");
+        const numChildren = parseInt(event.dataTransfer.getData("childrenText")) - 1;
         const direction = event.dataTransfer.getData("directionText");
         console.log(numChildren);
         console.log(direction);
+        let x = getXCoordinate(event.target);
+        let y = getYCoordinate(event.target);
+        let coordinates = [];
+        let endX;
+        let endY;
+
+        coordinates.push([x, y]);
+
+        if (direction === "row") {
+            endX = x + numChildren;
+            endY = y;
+            for (let i = x; i < endX; i++) {
+                coordinates.push([i, endY]);
+            }
+        } else {
+            endY = y + numChildren;
+            endX = x;
+            for (let i = y; i < endY; i++) {
+                coordinates.push([endX, i]);
+            }
+        }
+
+        coordinates.push([endX, endY]);
+
+        console.log([x, y]);
+        console.log([endX, endY]);
+        placeShipOnGameboard(username, coordinates);
+
     }
 
     const populateGameBoard = function (player) {
@@ -157,6 +186,16 @@ const DisplayController = (function () {
         });
     }
 
+    const placeShipOnGameboard = function (userName, coordinates) {
+            const rows = document.querySelectorAll(`div.gameboard[data-user='${userName}'] div.row:has(div.column)`);
+            coordinates.forEach((coord) => {
+                const [x, y] = coord;
+                const cols = rows[y].querySelectorAll("div.column");
+                cols[x].classList.add("ship");
+            });
+
+    }
+
     const activateGameboard = function () {
         const currentPlayer = getCurrentPlayer();
         setBannerMessage(`${currentPlayer.name}'s turn`);
@@ -208,8 +247,13 @@ const DisplayController = (function () {
     }
 
     const dragstart = function (event) {
-        event.dataTransfer.setData("childrenText", event.target.parentNode.children.length);
-        event.dataTransfer.setData("directionText", getComputedStyle(event.target.parentNode).flexDirection);
+        console.log(event.target);
+        event.dataTransfer.setData("childrenText", event.target.children.length);
+        event.dataTransfer.setData("directionText", getComputedStyle(event.target).flexDirection);
+        console.log("dragstart");
+        console.log(getComputedStyle(event.target).flexDirection);
+        console.log(event.target.style.flexDirection);
+        console.log(event.target.style.getPropertyValue("flexDirection"));
     }
 
     const createDragAndDrop = function () {
