@@ -139,7 +139,8 @@ span.miss-dot {
 }
 
 .draggable-ship {
-    display: grid;
+    display: flex;
+    flex-direction: row;
 }
 
 .shipSquare {

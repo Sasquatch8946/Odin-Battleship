@@ -88,6 +88,21 @@ const DisplayController = (function () {
         } 
     }
 
+    const dragover = function (event) {
+        event.preventDefault();
+    }
+
+    const dragenter = function (event) {
+        event.preventDefault();
+        console.log("drag enter fired");
+    }
+
+    const drop = function (event) {
+        event.preventDefault();
+        console.log("drop event fired");
+        event.target.classList.add("ship");
+    }
+
     const populateGameBoard = function (player) {
         const gameboard = player.gameboard;
         const numbers = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
@@ -118,6 +133,9 @@ const DisplayController = (function () {
                     }
                 } else {
                     column.classList.add("column");
+                    column.addEventListener("dragover", dragover);
+                    column.addEventListener("dragenter", dragenter);
+                    column.addEventListener("drop", drop);
                 }
                 row.appendChild(column);
             }
@@ -172,6 +190,24 @@ const DisplayController = (function () {
         });
     }
 
+    const rotateShip = function (event) {
+        console.log(event.target.parentNode);
+        console.log("rotating ship");
+        const direction = getComputedStyle(event.target.parentNode).flexDirection;
+        console.log(direction);
+        if (direction === "row") {
+            event.target.parentNode.style.flexDirection = "column";
+        } else { 
+            event.target.parentNode.style.flexDirection = "row";
+        }
+
+        console.log(getComputedStyle(event.target.parentNode).flexDirection);
+    }
+
+    const dragstart = function (event) {
+
+    }
+
     const createDragAndDrop = function () {
         const lengths = [5, 4, 3, 3, 2];
         const container = document.querySelector("div.bigger-container");
@@ -179,18 +215,20 @@ const DisplayController = (function () {
         gridArea.classList.add("grid-area");
         container.appendChild(gridArea);
         for (let i = 0; i < lengths.length; i++) {
-            const shipWrapper = document.createElement("div");
-            shipWrapper.classList.add("ship-wrapper");
-            gridArea.appendChild(shipWrapper);
             const ship = document.createElement("div");
             ship.classList.add("draggable-ship");
-            shipWrapper.appendChild(ship);
+            ship.draggable = true;
+            ship.addEventListener("dragstart", dragstart);
+            ship.addEventListener("dblclick", rotateShip);
+            gridArea.appendChild(ship);
             for (let j = 0; j < lengths[i]; j++) {
                 const shipSquare = document.createElement("div");
                 shipSquare.classList.add("shipSquare");
                 ship.appendChild(shipSquare);
             }
         }
+
+        dePopulateShips(null);
     }
 
     const activateManualPlacement = function () {
