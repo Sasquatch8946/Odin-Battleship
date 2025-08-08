@@ -213,11 +213,27 @@ const DisplayController = (function () {
         }
     }
 
+    const removeHumanStart = function () {
+        const humanStart = document.querySelector("button.human");
+        humanStart.remove();
+    }
+
+    const removeComputerStart = function () {
+        const computerStart = document.querySelector("button.computer");
+        computerStart.remove();
+
+    }
+
     const activateComputerStart = function () {
         const btn = document.querySelector("button.computer");
         btn.addEventListener("click", () => {
             PubSub.publish("gameType", "computer");
-            activateGameboard();
+            removeComputerStart();
+            removeHumanStart();
+            newRandomizerButton();
+            newManualButton();
+            newStartButton();
+            //activateGameboard();
         });
     }
 
@@ -234,6 +250,14 @@ const DisplayController = (function () {
         btn.addEventListener("click", () => {
             PubSub.publish("randomize");
         });
+    }
+
+    const newStartButton = function () {
+        const container = document.querySelector("div.button-container");
+        const btn = document.createElement("button");
+        btn.classList.add("start-game");
+        btn.innerText = "Start";
+        container.appendChild(btn);
     }
 
     const rotateShip = function (event) {
@@ -380,6 +404,24 @@ const DisplayController = (function () {
         ships.forEach((ship) => {
             ship.classList.remove("ship");
         });
+    }
+
+    const newRandomizerButton = function () {
+        const container = document.querySelector("div.button-container");
+        const btn = document.createElement("button");
+        btn.classList.add("randomizer");
+        btn.innerText = "Randomize grid";
+        container.appendChild(btn);
+        activateRandomizer();
+    }
+
+    const newManualButton = function () {
+        const container = document.querySelector("div.button-container");
+        const btn = document.createElement("button");
+        btn.classList.add("manual-placement");
+        btn.innerText = "Manually place ships";
+        container.appendChild(btn);
+        activateManualPlacement();
     }
 
     PubSub.subscribe("shipHit", markHit);
