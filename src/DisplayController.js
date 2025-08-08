@@ -103,8 +103,10 @@ const DisplayController = (function () {
         event.target.classList.add("ship");
         const numChildren = parseInt(event.dataTransfer.getData("childrenText")) - 1;
         const direction = event.dataTransfer.getData("directionText");
+        const shipId = event.dataTransfer.getData("shipIdText");
         console.log(numChildren);
         console.log(direction);
+        console.log(shipId);
         let x = getXCoordinate(event.target);
         let y = getYCoordinate(event.target);
         let coordinates = [];
@@ -132,6 +134,8 @@ const DisplayController = (function () {
         console.log([x, y]);
         console.log([endX, endY]);
         placeShipOnGameboard(username, coordinates);
+        const gridAreaShip = document.getElementById(shipId);
+        gridAreaShip.remove();
 
     }
 
@@ -247,16 +251,13 @@ const DisplayController = (function () {
     }
 
     const dragstart = function (event) {
-        setTimeout(() => {
-            event.target.classList.add("hide");
-        }, 0);
-        console.log(event.target);
         event.dataTransfer.setData("childrenText", event.target.children.length);
         event.dataTransfer.setData("directionText", getComputedStyle(event.target).flexDirection);
-        console.log("dragstart");
+        event.dataTransfer.setData("shipIdText", event.target.id);
+        /*console.log("dragstart");
         console.log(getComputedStyle(event.target).flexDirection);
         console.log(event.target.style.flexDirection);
-        console.log(event.target.style.getPropertyValue("flexDirection"));
+        console.log(event.target.style.getPropertyValue("flexDirection"));*/
     }
 
     const createDragAndDrop = function () {
@@ -271,6 +272,7 @@ const DisplayController = (function () {
             ship.draggable = true;
             ship.addEventListener("dragstart", dragstart);
             ship.addEventListener("dblclick", rotateShip);
+            ship.id = `ship${i}`;
             gridArea.appendChild(ship);
             for (let j = 0; j < lengths[i]; j++) {
                 const shipSquare = document.createElement("div");
