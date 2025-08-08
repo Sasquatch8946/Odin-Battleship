@@ -247,6 +247,9 @@ const DisplayController = (function () {
     }
 
     const dragstart = function (event) {
+        setTimeout(() => {
+            event.target.classList.add("hide");
+        }, 0);
         console.log(event.target);
         event.dataTransfer.setData("childrenText", event.target.children.length);
         event.dataTransfer.setData("directionText", getComputedStyle(event.target).flexDirection);
