@@ -136,6 +136,10 @@ span.miss-dot {
 .grid-area {
     display: flex;
     gap: 5px;
+    margin-left: 25px;
+    width: max-content;
+    border: 2px solid black;
+    padding: 20px;
 }
 
 .draggable-ship {
