@@ -202,11 +202,20 @@ const DisplayController = (function () {
 
     const activateGameboard = function () {
         const currentPlayer = getCurrentPlayer();
+        const opponent = getOpponent(currentPlayer.name);
         setBannerMessage(`${currentPlayer.name}'s turn`);
         if (!currentPlayer.isComputer) {
-            const gameboard = getOpponentBoard();
-            gameboard.parentNode.classList.add("turn");
-            gameboard.addEventListener("click", receiveManualAttack);
+            // need to grey out current player's board
+            // and remove ships from display
+            const currentPlayerGameBoard = getGameboardByUser(currentPlayer.name);
+            const opponentGameboard = getOpponentBoard();
+            const currentBoardClassList = Array.from(currentPlayerGameBoard.parentNode.classList);
+            if (currentBoardClassList.indexOf("obscured") > -1) {
+                currentPlayerGameBoard.parentNode.classList.remove("obscured");
+            }
+            clearPlayerShips(opponent.name);
+            opponentGameboard.parentNode.classList.add("turn");
+            opponentGameboard.addEventListener("click", receiveManualAttack);
         } else {
             // automate attacks
             computerAttack();
@@ -233,6 +242,9 @@ const DisplayController = (function () {
             newRandomizerButton();
             newManualButton();
             newStartButton();
+            // need to grey out/conceal the placements of the 
+            // computer's ships
+            // also randomize computer's ships
             //activateGameboard();
         });
     }
@@ -258,6 +270,9 @@ const DisplayController = (function () {
         btn.classList.add("start-game");
         btn.innerText = "Start";
         container.appendChild(btn);
+        btn.addEventListener("click", () => {
+            activateGameboard();
+        });
     }
 
     const rotateShip = function (event) {
@@ -404,6 +419,15 @@ const DisplayController = (function () {
         ships.forEach((ship) => {
             ship.classList.remove("ship");
         });
+    }
+
+    const clearPlayerShips = function (username) {
+        const gameboard = getGameboardByUser(username);
+        const ships = Array.from(gameboard.querySelectorAll("div.ship"));
+        ships.forEach((ship) => {
+            ship.classList.remove("ship");
+        });
+
     }
 
     const newRandomizerButton = function () {
