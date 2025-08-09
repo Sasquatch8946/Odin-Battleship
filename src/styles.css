@@ -63,6 +63,7 @@ div.row>div:nth-child(-n + 10) {
 
 .turn {
     border: 2px solid firebrick !important;
+    opacity: 0.5;
 }
 
 .hit {
@@ -152,3 +153,4 @@ span.miss-dot {
     width: 50px;
     background-color: lightblue;
 }
+
