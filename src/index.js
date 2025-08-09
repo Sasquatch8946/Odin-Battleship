@@ -52,12 +52,17 @@ function main () {
         }
     });
 
-    PubSub.subscribe("randomize", (_msg) => {
-        player1.gameboard.randomizeShipPlacements();
-        player2.gameboard.randomizeShipPlacements();
-        DisplayController.dePopulateShips();
-        DisplayController.populateShips(player1);
-        DisplayController.populateShips(player2);
+    PubSub.subscribe("randomize", (_msg, {player, visible}) => {
+        console.log(player.name);
+        console.log(player.gameboard.ships);
+        player.gameboard.randomizeShipPlacements();
+        DisplayController.clearPlayerShips(player.name);
+        if (visible === true) {
+            DisplayController.populateShips(player);
+        }
+
+        console.log("after randomizing ship placements");
+        console.log(player.gameboard.ships);
     });
 }
 
