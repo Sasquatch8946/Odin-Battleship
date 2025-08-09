@@ -236,7 +236,10 @@ const DisplayController = (function () {
     const activateComputerStart = function () {
         const btn = document.querySelector("button.computer");
         btn.addEventListener("click", () => {
+            const opponent = getOpponent(getCurrentPlayer().name);
+            PubSub.publish("randomize", {player: opponent, visible: false});
             PubSub.publish("gameType", "computer");
+            clearPlayerShips(opponent.name);
             removeComputerStart();
             removeHumanStart();
             newRandomizerButton();
@@ -260,7 +263,8 @@ const DisplayController = (function () {
     const activateRandomizer = function () {
         const btn = document.querySelector("button.randomizer");
         btn.addEventListener("click", () => {
-            PubSub.publish("randomize");
+            const currentPlayer = getCurrentPlayer();
+            PubSub.publish("randomize", {player: currentPlayer, visible: true});
         });
     }
 
@@ -467,6 +471,7 @@ const DisplayController = (function () {
         activateRandomizer,
         dePopulateShips,
         activateManualPlacement,
+        clearPlayerShips,
     }
 })();
 
