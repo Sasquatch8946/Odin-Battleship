@@ -373,13 +373,71 @@ const DisplayController = (function () {
     }
 
     const markHit = function (_msg, data) {
-        const {coordinates, username} = data;
+        const {coordinates, shipCoordinates, sunk} = data;
         const square = getSquare(coordinates);
         square.classList.add("hit");
         const s = document.createElement("span");
         s.classList.add("z");
         square.appendChild(s);
+        if (sunk) {
+            markSunk(shipCoordinates);
+        }
         nextTurn();
+    }
+
+    const getShipOrientation = function (coordinates) {
+        if (coordinates[1][0] > coordinates[0][0]) {
+            return "horizontal";
+        } else if (coordinates[1][1] > coordinates[0][1]) {
+            return "vertical";
+        }
+    }
+
+    const markSunkHorizontal = function (coordinates) {
+        const style = "2px solid firebrick";
+        for (let i = 0; i < coordinates.length; i++) {
+            const square = getSquare(coordinates[i]);
+            if (i === 0) {
+                square.style.borderLeft = style;
+                square.style.borderTop = style;
+                square.style.borderBottom = style;
+            } else if (i === coordinates.length -1) {
+                square.style.borderRight = style;
+                square.style.borderTop = style;
+                square.style.borderBottom = style;
+            } else {
+                square.style.borderTop = style;
+                square.style.borderBottom = style;
+            }
+        }
+    }
+
+    const markSunkVertical = function (coordinates) {
+        const style = "2px solid firebrick";
+        for (let i = 0; i < coordinates.length; i++) {
+            const square = getSquare(coordinates[i]);
+            if (i === 0) {
+                square.style.borderLeft = style;
+                square.style.borderTop = style;
+                square.style.borderRight = style;
+            } else if (i === coordinates.length -1) {
+                square.style.borderRight = style;
+                square.style.borderLeft = style;
+                square.style.borderBottom = style;
+            } else {
+                square.style.borderLeft = style;
+                square.style.borderRight = style;
+            }
+        }
+    }
+
+    const markSunk = function (shipCoordinates) {
+        const orientation = getShipOrientation(shipCoordinates);
+        if (orientation === "horizontal") {
+            markSunkHorizontal(shipCoordinates);
+        } else if (orientation === "vertical") {
+            markSunkVertical(shipCoordinates);
+        }
     }
 
     const getSquare = function (coordinates) {
@@ -459,6 +517,8 @@ const DisplayController = (function () {
     PubSub.subscribe("startOfTurn", startNewTurn);
 
     PubSub.subscribe("endGame", endGame);
+
+    PubSub.subscribe("shipSunk", markSunk);
 
     return {
         populateGameBoard,
