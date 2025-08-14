@@ -66,6 +66,10 @@ div.row>div:nth-child(-n + 10) {
     opacity: 0.5;
 }
 
+.active {
+    border: 2px solid firebrick;
+}
+
 .hit {
     position: relative
 }
