@@ -20,7 +20,8 @@ const DisplayController = (function () {
         return getGameboardByUser(opponent.name);
     }
 
-    const getOpponent = function (username) {
+    const getOpponent = function () {
+        const username = getCurrentPlayer().name;
         const opponent = players.filter((p) => p.name !== username)[0];
         return opponent;
     }
@@ -32,6 +33,11 @@ const DisplayController = (function () {
     const setBannerMessage = function (msg) {
         const msgDiv = document.querySelector("div.messages");
         msgDiv.innerText = msg;
+    }
+
+    const changeCurrentPlayer = function () {
+        const opponent = getOpponent();
+        setCurrentPlayer(opponent);
     }
 
     const nextTurn = function () {
@@ -201,8 +207,7 @@ const DisplayController = (function () {
     }
 
     const activateGameboard = function () {
-        const currentPlayer = getCurrentPlayer();
-        const opponent = getOpponent(currentPlayer.name);
+        const opponent = getOpponent();
         setBannerMessage(`${currentPlayer.name}'s turn`);
         if (!currentPlayer.isComputer) {
             // need to grey out current player's board
@@ -233,18 +238,26 @@ const DisplayController = (function () {
 
     }
 
+    const enterGameSetup = function (human = false) {
+        removeComputerStart();
+        removeHumanStart();
+        newRandomizerButton();
+        newManualButton();
+        if (human) {
+            newSubmitButton();
+        } else {
+            newStartButton();
+        }
+    }
+
     const activateComputerStart = function () {
         const btn = document.querySelector("button.computer");
         btn.addEventListener("click", () => {
-            const opponent = getOpponent(getCurrentPlayer().name);
+            const opponent = getOpponent();
             PubSub.publish("randomize", {player: opponent, visible: false});
             PubSub.publish("gameType", "computer");
             clearPlayerShips(opponent.name);
-            removeComputerStart();
-            removeHumanStart();
-            newRandomizerButton();
-            newManualButton();
-            newStartButton();
+            enterGameSetup();
             // need to grey out/conceal the placements of the 
             // computer's ships
             // also randomize computer's ships
@@ -256,7 +269,8 @@ const DisplayController = (function () {
         const btn = document.querySelector("button.human");
         btn.addEventListener("click", () => {
             PubSub.publish("gameType", "human");
-            activateGameboard();
+            enterGameSetup(true);
+            //activateGameboard();
         });
     }
 
@@ -278,6 +292,19 @@ const DisplayController = (function () {
             activateGameboard();
         });
     }
+
+    const newSubmitButton = function () {
+        const currentPlayer = getCurrentPlayer().name
+        const container = document.querySelector("div.button-container");
+        const btn = document.createElement("button");
+        btn.classList.add("submit-grid");
+        btn.innerText = "Submit";
+        container.appendChild(btn);
+        btn.addEventListener("click", () => {
+            changeCurrentPlayer();
+        });
+    }
+
 
     const rotateShip = function (event) {
         console.log(event.target.parentNode);
@@ -373,7 +400,7 @@ const DisplayController = (function () {
     }
 
     const markHit = function (_msg, data) {
-        const {coordinates, shipCoordinates, sunk} = data;
+        const {coordinates, shipCoordinates, sunk, endGame} = data;
         const square = getSquare(coordinates);
         square.classList.add("hit");
         const s = document.createElement("span");
@@ -382,7 +409,10 @@ const DisplayController = (function () {
         if (sunk) {
             markSunk(shipCoordinates);
         }
-        nextTurn();
+
+        if (!endGame) {
+            nextTurn();
+        }
     }
 
     const getShipOrientation = function (coordinates) {
@@ -471,7 +501,7 @@ const DisplayController = (function () {
     }
 
     const endGame = function (_msg, losingPlayer) {
-        const winner = getOpponent(losingPlayer);
+        const winner = getCurrentPlayer();
         setBannerMessage(`Game over. ${winner.name} won.`);
         deactivateGameboard();    
     }
@@ -490,6 +520,10 @@ const DisplayController = (function () {
             ship.classList.remove("ship");
         });
 
+    }
+
+    const clearOpponentShips = function () {
+        const opponent = getOpponent();
     }
 
     const newRandomizerButton = function () {
