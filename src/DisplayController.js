@@ -20,6 +20,11 @@ const DisplayController = (function () {
         return getGameboardByUser(opponent.name);
     }
 
+    const getCurrentPlayerBoard = function () {
+        const currentPlayer = getCurrentPlayer();
+        return getGameboardByUser(currentPlayer.name);
+    }
+
     const getOpponent = function () {
         const username = getCurrentPlayer().name;
         const opponent = players.filter((p) => p.name !== username)[0];
@@ -206,6 +211,22 @@ const DisplayController = (function () {
 
     }
 
+    const changeActiveGameboard = function () {
+        const currentPlayerGameBoard = getCurrentPlayerBoard();
+        const opponentGameboard = getOpponentBoard();
+        const opponent = getOpponent();
+        const currentBoardClassList = Array.from(currentPlayerGameBoard.parentNode.classList);
+        if (currentBoardClassList.indexOf("obscured") > -1) {
+            currentPlayerGameBoard.parentNode.classList.remove("obscured");
+        }
+        currentPlayerGameBoard.parentNode.classList.add("active");
+        clearPlayerShips(opponent.name);
+        const opponentBoardClassList = Array.from(opponentGameboard.parentNode.classList);
+        if (opponentBoardClassList.indexOf("active") > -1) {
+            opponentGameboard.parentNode.classList.remove("active");
+        }
+    }
+
     const activateGameboard = function () {
         const opponent = getOpponent();
         setBannerMessage(`${currentPlayer.name}'s turn`);
@@ -218,6 +239,7 @@ const DisplayController = (function () {
             if (currentBoardClassList.indexOf("obscured") > -1) {
                 currentPlayerGameBoard.parentNode.classList.remove("obscured");
             }
+            populateShips(currentPlayer);
             clearPlayerShips(opponent.name);
             opponentGameboard.parentNode.classList.add("turn");
             opponentGameboard.addEventListener("click", receiveManualAttack);
@@ -238,12 +260,19 @@ const DisplayController = (function () {
 
     }
 
+    const hideOpponentBoard = function () {
+        const opponent = getOpponent();
+        clearPlayerShips(opponent.name);
+    }
+
     const enterGameSetup = function (human = false) {
         removeComputerStart();
         removeHumanStart();
         newRandomizerButton();
         newManualButton();
         if (human) {
+            setBannerMessage(`${getCurrentPlayer().name} - place your ships`);
+            changeActiveGameboard();
             newSubmitButton();
         } else {
             newStartButton();
@@ -294,14 +323,21 @@ const DisplayController = (function () {
     }
 
     const newSubmitButton = function () {
-        const currentPlayer = getCurrentPlayer().name
         const container = document.querySelector("div.button-container");
         const btn = document.createElement("button");
         btn.classList.add("submit-grid");
         btn.innerText = "Submit";
         container.appendChild(btn);
         btn.addEventListener("click", () => {
+            const currentPlayer = getCurrentPlayer();
             changeCurrentPlayer();
+            if (currentPlayer.name === "Player 2") {
+                activateGameboard();
+            } else {
+                setBannerMessage(`${getCurrentPlayer().name} - place your ships`);
+                changeActiveGameboard();
+                populateShips(getCurrentPlayer());
+            }
         });
     }
 
