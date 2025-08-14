@@ -45,12 +45,12 @@ const DisplayController = (function () {
         setCurrentPlayer(opponent);
     }
 
-    const nextTurn = function () {
+    const nextTurn = async function () {
         const currentPlayer = getCurrentPlayer();
         const nextPlayer = players.filter((p) => p != currentPlayer)[0];
         setCurrentPlayer(nextPlayer);
         setBannerMessage(`${nextPlayer.name}'s turn`);
-        activateGameboard();
+        await activateGameboard();
     }
 
     const randomIntFromInterval = function (min, max) { // min and max included 
@@ -227,7 +227,7 @@ const DisplayController = (function () {
         }
     }
 
-    const activateGameboard = function () {
+    const activateGameboard = async function () {
         const opponent = getOpponent();
         setBannerMessage(`${currentPlayer.name}'s turn`);
         if (!currentPlayer.isComputer) {
@@ -239,9 +239,10 @@ const DisplayController = (function () {
             if (currentBoardClassList.indexOf("obscured") > -1) {
                 currentPlayerGameBoard.parentNode.classList.remove("obscured");
             }
-            populateShips(currentPlayer);
             clearPlayerShips(opponent.name);
             opponentGameboard.parentNode.classList.add("turn");
+            await changeTurn();
+            populateShips(currentPlayer);
             opponentGameboard.addEventListener("click", receiveManualAttack);
         } else {
             // automate attacks
@@ -317,9 +318,41 @@ const DisplayController = (function () {
         btn.classList.add("start-game");
         btn.innerText = "Start";
         container.appendChild(btn);
-        btn.addEventListener("click", () => {
-            activateGameboard();
+        btn.addEventListener("click", async function () {
+            await activateGameboard();
         });
+    }
+
+    const sleep = function (ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    const activatePassScreen = async function () {
+        const dialog = document.querySelector("dialog");
+        dialog.showModal();
+        setTimeout(() => {
+            dialog.close();
+        }, 5000)
+    }
+
+    const changeTurn = async function () {
+        await activatePassScreen();
+        await sleep(5000);
+
+    }
+
+    const submitGrid = async function () {
+        const currentPlayer = getCurrentPlayer();
+        changeCurrentPlayer();
+        if (currentPlayer.name === "Player 2") {
+            await activateGameboard();
+        } else {
+            changeActiveGameboard();
+            await changeTurn();
+            setBannerMessage(`${getCurrentPlayer().name} - place your ships`);
+            populateShips(getCurrentPlayer());
+        }
+
     }
 
     const newSubmitButton = function () {
@@ -328,17 +361,7 @@ const DisplayController = (function () {
         btn.classList.add("submit-grid");
         btn.innerText = "Submit";
         container.appendChild(btn);
-        btn.addEventListener("click", () => {
-            const currentPlayer = getCurrentPlayer();
-            changeCurrentPlayer();
-            if (currentPlayer.name === "Player 2") {
-                activateGameboard();
-            } else {
-                setBannerMessage(`${getCurrentPlayer().name} - place your ships`);
-                changeActiveGameboard();
-                populateShips(getCurrentPlayer());
-            }
-        });
+        btn.addEventListener("click", submitGrid);
     }
 
 
@@ -413,8 +436,8 @@ const DisplayController = (function () {
             const y = getYCoordinate(element);
             const coordinates = [x, y];
             console.log(`${x}, ${y}`);
-            element.parentNode.parentNode.removeEventListener("click", receiveManualAttack);
-            element.closest("div.gameboard-wrapper").classList.remove("turn");
+            //element.parentNode.parentNode.removeEventListener("click", receiveManualAttack);
+            //element.closest("div.gameboard-wrapper").classList.remove("turn");
             const username = getUserFromGameboard(element);
             PubSub.publish("attackRegistered", {username, coordinates});
         }
@@ -435,7 +458,7 @@ const DisplayController = (function () {
         return [x+1, y+1];
     }
 
-    const markHit = function (_msg, data) {
+    const markHit = async function (_msg, data) {
         const {coordinates, shipCoordinates, sunk, endGame} = data;
         const square = getSquare(coordinates);
         square.classList.add("hit");
@@ -446,9 +469,9 @@ const DisplayController = (function () {
             markSunk(shipCoordinates);
         }
 
-        if (!endGame) {
-            nextTurn();
-        }
+        /*if (!endGame) {
+            await nextTurn();
+        }*/
     }
 
     const getShipOrientation = function (coordinates) {
@@ -522,12 +545,13 @@ const DisplayController = (function () {
         const s = document.createElement("span");
         s.classList.add("miss-dot");
         square.appendChild(s);
+        deactivateGameboard();
         nextTurn();
     }
 
-    const startNewTurn = function (_msg, nextPlayer) {
+    const startNewTurn = async function (_msg, nextPlayer) {
         setCurrentPlayer(nextPlayer);
-        activateGameboard();
+        await activateGameboard();
     }
 
     const deactivateGameboard = function () {
