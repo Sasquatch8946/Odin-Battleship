@@ -66,6 +66,7 @@ class Gameboard {
     receiveAttack (coordinates, username = null) {
         const [x, y] = coordinates;
         let sunk = false;
+        let endGame = false;
         const isHit = this.ships.filter((ship) => ship.coordinates.some((c) => Gameboard.#areEqualArrays(c, coordinates)));
         if (isHit.length > 0) {
             isHit[0].hit();
@@ -76,16 +77,18 @@ class Gameboard {
                 sunk = true;
                 console.log("ship is sunk");
                 const allSunk = this.allShipsSunk();
+                const shipCoordinates = isHit[0].coordinates;
                 if (allSunk) {
+                    endGame = true;
                     console.log("All ships have been sunk. Game over.");
+                    PubSub.publish("shipHit", {coordinates, shipCoordinates, sunk, endGame});
                     PubSub.publish("endGame", username);
                 } else {
                     console.log("Some ships have not been sunk. Keep playing.");
-                    const shipCoordinates = isHit[0].coordinates;
-                    PubSub.publish("shipHit", {coordinates, shipCoordinates, sunk});
+                    PubSub.publish("shipHit", {coordinates, shipCoordinates, sunk, endGame});
                 }
             } else {
-                PubSub.publish("shipHit", {coordinates, username});
+                PubSub.publish("shipHit", {coordinates, username, sunk, endGame});
             }
             return true;
         } else {
