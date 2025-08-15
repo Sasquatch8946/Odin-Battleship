@@ -251,11 +251,11 @@ const DisplayController = (function () {
                 currentPlayerGameBoard.parentNode.classList.remove("obscured");
             }
 
-            if (currentBoardClassList.indexOf("active") > -1) {
-                currentPlayerGameBoard.parentNode.classList.remove("active");
+            if (currentBoardClassList.indexOf("turn") > -1) {
+                currentPlayerGameBoard.parentNode.classList.remove("turn");
             }
             clearPlayerShips(opponent.name);
-            opponentGameboard.parentNode.classList.add("active");
+            opponentGameboard.parentNode.classList.add("turn");
             if (!opponent.isComputer) {
                 await changeTurn();
             }
@@ -346,10 +346,23 @@ const DisplayController = (function () {
 
     const activatePassScreen = async function () {
         const dialog = document.querySelector("dialog");
+        const counter = document.querySelector("div.count");
+        counter.innerText = "5";
         dialog.showModal();
-        setTimeout(() => {
+        /*setTimeout(() => {
             dialog.close();
-        }, 5000)
+        }, 5000)*/
+        let count = 0;
+        const intervalId = setInterval(() => {
+            const counter = document.querySelector("div.count");
+            let timeRemaining = parseInt(counter.innerText) - 1;
+            counter.innerText = timeRemaining.toString();
+            count++;
+            if (count >= 5) {
+                dialog.close();
+                clearInterval(intervalId);
+            }
+        }, 1000)
     }
 
     const changeTurn = async function () {
@@ -360,16 +373,28 @@ const DisplayController = (function () {
 
     const removeGridArea = function () {
         const gridArea = document.querySelector(".grid-area");
-        gridArea.remove();
+        if (gridArea) {
+            gridArea.remove();
+        }
+    }
+
+    const endSetup = function () {
+        const currentPlayerBoard = getCurrentPlayerBoard();
+        const classList = Array.from(currentPlayerBoard.parentNode.classList);
+        if (classList.indexOf("active") > -1) {
+            currentPlayerBoard.parentNode.classList.remove("active");
+        }
     }
 
     const submitGrid = async function () {
         removeGridArea();
         const currentPlayer = getCurrentPlayer();
-        changeCurrentPlayer();
         if (currentPlayer.name === "Player 2") {
+            endSetup();
+            changeCurrentPlayer();
             await activateGameboard();
         } else {
+            changeCurrentPlayer();            
             changeActiveGameboard();
             await changeTurn();
             setBannerMessage(`${getCurrentPlayer().name} - place your ships`);
