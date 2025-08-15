@@ -630,7 +630,7 @@ const DisplayController = (function () {
         gameboard.removeEventListener("click", receiveManualAttack);
     }
 
-    const endGame = function (_msg, losingPlayer) {
+    const endGame = function (_msg) {
         const winner = getCurrentPlayer();
         setBannerMessage(`Game over. ${winner.name} won.`);
         deactivateGameboard();    
