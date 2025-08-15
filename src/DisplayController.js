@@ -71,7 +71,16 @@ const DisplayController = (function () {
     }
 
     const computerAttack = function () {
-        const square = getRandomSquare();
+        let square = getRandomSquare();
+        let classList = Array.from(square.classList);
+        console.log(classList);
+        while (classList.indexOf("ship") > -1) {
+            sendAttack(square);
+            square = getRandomSquare();
+            classList = Array.from(square.classList);
+            console.log(classList);
+        }
+
         sendAttack(square);
     }
 
@@ -241,6 +250,10 @@ const DisplayController = (function () {
             if (currentBoardClassList.indexOf("obscured") > -1) {
                 currentPlayerGameBoard.parentNode.classList.remove("obscured");
             }
+
+            if (currentBoardClassList.indexOf("active") > -1) {
+                currentPlayerGameBoard.parentNode.classList.remove("active");
+            }
             clearPlayerShips(opponent.name);
             opponentGameboard.parentNode.classList.add("active");
             if (!opponent.isComputer) {
@@ -345,7 +358,13 @@ const DisplayController = (function () {
 
     }
 
+    const removeGridArea = function () {
+        const gridArea = document.querySelector(".grid-area");
+        gridArea.remove();
+    }
+
     const submitGrid = async function () {
+        removeGridArea();
         const currentPlayer = getCurrentPlayer();
         changeCurrentPlayer();
         if (currentPlayer.name === "Player 2") {
