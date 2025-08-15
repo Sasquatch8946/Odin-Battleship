@@ -202,12 +202,14 @@ const DisplayController = (function () {
     }
 
     const placeShipOnGameboard = function (userName, coordinates) {
-            const rows = document.querySelectorAll(`div.gameboard[data-user='${userName}'] div.row:has(div.column)`);
-            coordinates.forEach((coord) => {
-                const [x, y] = coord;
-                const cols = rows[y].querySelectorAll("div.column");
-                cols[x].classList.add("ship");
-            });
+        const rows = document.querySelectorAll(`div.gameboard[data-user='${userName}'] div.row:has(div.column)`);
+        coordinates.forEach((coord) => {
+            const [x, y] = coord;
+            const cols = rows[y].querySelectorAll("div.column");
+            cols[x].classList.add("ship");
+        });
+
+        PubSub.publish("dropShip", {userName, coordinates});
 
     }
 
@@ -240,8 +242,10 @@ const DisplayController = (function () {
                 currentPlayerGameBoard.parentNode.classList.remove("obscured");
             }
             clearPlayerShips(opponent.name);
-            opponentGameboard.parentNode.classList.add("turn");
-            await changeTurn();
+            opponentGameboard.parentNode.classList.add("active");
+            if (!opponent.isComputer) {
+                await changeTurn();
+            }
             populateShips(currentPlayer);
             opponentGameboard.addEventListener("click", receiveManualAttack);
         } else {
@@ -390,6 +394,8 @@ const DisplayController = (function () {
     }
 
     const createDragAndDrop = function () {
+        const currentPlayer = getCurrentPlayer();
+        PubSub.publish("dragNDrop", currentPlayer.name);
         const lengths = [5, 4, 3, 3, 2];
         const container = document.querySelector("div.bigger-container");
         const gridArea = document.createElement("div");
