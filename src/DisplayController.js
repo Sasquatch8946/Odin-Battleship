@@ -349,9 +349,6 @@ const DisplayController = (function () {
         const counter = document.querySelector("div.count");
         counter.innerText = "5";
         dialog.showModal();
-        /*setTimeout(() => {
-            dialog.close();
-        }, 5000)*/
         let count = 0;
         const intervalId = setInterval(() => {
             const counter = document.querySelector("div.count");
