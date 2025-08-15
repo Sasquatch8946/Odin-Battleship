@@ -165,3 +165,7 @@ div.dialog-container {
     gap: 2px;
 }
 
+.active-square {
+    border: 2px solid green !important;
+}
+

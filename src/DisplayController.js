@@ -238,6 +238,31 @@ const DisplayController = (function () {
         }
     }
 
+    const addGreenBorders = function (event) {
+        event.target.classList.add('active-square');
+    }
+
+    const removeGreenBorders = function (event) {
+        event.target.classList.remove('active-square');
+    }
+
+    const createOnHoverEffect = function (gameboard) {
+        const squares = Array.from(gameboard.querySelectorAll('div.column:not(.hit, .miss)'));
+        squares.forEach((s) => {
+            s.addEventListener("mouseover", addGreenBorders);
+            s.addEventListener("mouseout", removeGreenBorders);
+        });
+    }
+
+    const removeOnHoverEffect = function (gameboard) {
+        const squares = Array.from(gameboard.querySelectorAll('div.column:not(.hit, .miss)'));
+        squares.forEach((s) => {
+            s.removeEventListener("mouseover", addGreenBorders);
+            s.removeEventListener("mouseout", removeGreenBorders);
+        });
+    }
+
+
     const activateGameboard = async function () {
         const opponent = getOpponent();
         setBannerMessage(`${currentPlayer.name}'s turn`);
@@ -245,6 +270,7 @@ const DisplayController = (function () {
             // need to grey out current player's board
             // and remove ships from display
             const currentPlayerGameBoard = getGameboardByUser(currentPlayer.name);
+            removeOnHoverEffect(currentPlayerGameBoard);
             const opponentGameboard = getOpponentBoard();
             const currentBoardClassList = Array.from(currentPlayerGameBoard.parentNode.classList);
             if (currentBoardClassList.indexOf("obscured") > -1) {
@@ -260,6 +286,8 @@ const DisplayController = (function () {
                 await changeTurn();
             }
             populateShips(currentPlayer);
+            // make possible attack squares have an onhover effect
+            createOnHoverEffect(opponentGameboard);
             opponentGameboard.addEventListener("click", receiveManualAttack);
         } else {
             // automate attacks
