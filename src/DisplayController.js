@@ -414,6 +414,7 @@ const DisplayController = (function () {
         removeRandomizerButton();
         removeManualPlacementButton();
         removeSubmitButton();
+        newResetButton();
     }
 
     const submitGrid = async function () {
@@ -456,6 +457,19 @@ const DisplayController = (function () {
         btn.innerText = "Submit";
         container.appendChild(btn);
         btn.addEventListener("click", submitGrid);
+    }
+
+    const resetGame = function () {
+        PubSub.publish("gameReset");
+    }
+
+    const newResetButton = function () {
+        const container = document.querySelector("div.button-container");
+        const btn = document.createElement("button");
+        btn.classList.add("reset");
+        btn.innerText = "Reset";
+        container.appendChild(btn);
+        btn.addEventListener("click", resetGame);
     }
 
 
