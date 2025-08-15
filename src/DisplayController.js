@@ -189,9 +189,9 @@ const DisplayController = (function () {
                     }
                 } else {
                     column.classList.add("column");
-                    column.addEventListener("dragover", dragover);
+                    /*column.addEventListener("dragover", dragover);
                     column.addEventListener("dragenter", dragenter);
-                    column.addEventListener("drop", drop);
+                    column.addEventListener("drop", drop);*/
                 }
                 row.appendChild(column);
             }
@@ -385,6 +385,7 @@ const DisplayController = (function () {
 
     const submitGrid = async function () {
         removeGridArea();
+        deactivateDrop();
         const currentPlayer = getCurrentPlayer();
         if (currentPlayer.name === "Player 2") {
             endSetup();
@@ -434,8 +435,30 @@ const DisplayController = (function () {
         console.log(event.target.style.getPropertyValue("flexDirection"));*/
     }
 
+    const makeBoardDroppable = function () {
+        const currentPlayerBoard = getCurrentPlayerBoard();
+        const columns = Array.from(currentPlayerBoard.querySelectorAll(".column"));
+        columns.forEach((column) => {
+            column.addEventListener("dragover", dragover);
+            column.addEventListener("dragenter", dragenter);
+            column.addEventListener("drop", drop);
+        });
+    }
+
+    const deactivateDrop = function () {
+        const currentPlayerBoard = getCurrentPlayerBoard();
+        const columns = Array.from(currentPlayerBoard.querySelectorAll(".column"));
+        columns.forEach((column) => {
+            column.removeEventListener("dragover", dragover);
+            column.removeEventListener("dragenter", dragenter);
+            column.removeEventListener("drop", drop);
+        });
+
+    }
+
     const createDragAndDrop = function () {
         const currentPlayer = getCurrentPlayer();
+        makeBoardDroppable();
         PubSub.publish("dragNDrop", currentPlayer.name);
         const lengths = [5, 4, 3, 3, 2];
         const container = document.querySelector("div.bigger-container");
