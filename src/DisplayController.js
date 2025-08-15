@@ -381,6 +381,11 @@ const DisplayController = (function () {
         if (classList.indexOf("active") > -1) {
             currentPlayerBoard.parentNode.classList.remove("active");
         }
+        // remove buttons 
+        // maybe add a reset button?
+        removeRandomizerButton();
+        removeManualPlacementButton();
+        removeSubmitButton();
     }
 
     const submitGrid = async function () {
@@ -399,6 +404,21 @@ const DisplayController = (function () {
             populateShips(getCurrentPlayer());
         }
 
+    }
+
+    const removeSubmitButton = function () {
+        const btn = document.querySelector("button.submit-grid");
+        btn.remove();
+    }
+
+    const removeRandomizerButton = function () {
+        const btn = document.querySelector("button.randomizer");
+        btn.remove();
+    }
+
+    const removeManualPlacementButton = function () {
+        const btn = document.querySelector("button.manual-placement");
+        btn.remove();
     }
 
     const newSubmitButton = function () {
