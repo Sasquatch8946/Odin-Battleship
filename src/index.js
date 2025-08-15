@@ -64,6 +64,19 @@ function main () {
         console.log("after randomizing ship placements");
         console.log(player.gameboard.ships);
     });
+
+    PubSub.subscribe("dropShip", (_msg, data) => {
+        const {userName, coordinates} = data;
+        const player = getPlayer(userName);
+        const firstCoord = coordinates[0];
+        const lastCoord = coordinates.at(-1);
+        player.gameboard.placeShip(firstCoord, lastCoord);
+    });
+
+    PubSub.subscribe("dragNDrop", (_msg, currentPlayerName) => {
+       const currentPlayer = getPlayer(currentPlayerName);
+       currentPlayer.gameboard.clearShips();
+    });
 }
 
 main()
